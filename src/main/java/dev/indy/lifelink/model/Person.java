@@ -13,9 +13,24 @@ public class Person {
     private String _middleName;
     private String _lastName;
     private String _phoneNumber;
+    private Gender _gender;
     private Address _address;
 
+    public enum Gender {
+        MALE,
+        FEMALE
+    }
+
     protected Person() {}
+
+    public Person(String firstName, String middleName, String lastName, String phoneNumber, Gender gender, Address address) {
+        this._firstName = firstName;
+        this._middleName = middleName;
+        this._lastName = lastName;
+        this._phoneNumber = phoneNumber;
+        this._gender = gender;
+        this._address = address;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,6 +53,11 @@ public class Person {
     @Column(name = "phoneNumber", nullable = false, length = 15)
     public String getPhoneNumber() { return this._phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this._phoneNumber = phoneNumber; }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false, length = 10)
+    public Gender getGender() { return this._gender; }
+    public void setGender(Gender gender) { this._gender = gender; }
 
     @Embedded
     public Address getAddress() { return this._address; }

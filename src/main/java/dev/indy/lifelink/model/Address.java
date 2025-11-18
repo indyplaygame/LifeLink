@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Address {
+    private String _country;
     private String _postalCode;
     private String _city;
     private String _street;
@@ -12,12 +13,17 @@ public class Address {
 
     protected Address() {}
 
-    public Address(String postalCode, String city, String street, String buildingNumber) {
+    public Address(String country, String postalCode, String city, String street, String buildingNumber) {
+        this._country = country;
         this._postalCode = postalCode;
         this._city = city;
         this._street = street;
         this._buildingNumber = buildingNumber;
     }
+
+    @Column(name = "country", nullable = false, length = 100)
+    public String getCountry() { return this._country; }
+    public void setCountry(String country) { this._country = country; }
 
     @Column(name = "postalCode", nullable = false, length = 9)
     public String getPostalCode() { return this._postalCode; }
