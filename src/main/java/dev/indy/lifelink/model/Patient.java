@@ -36,8 +36,8 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "patientId", nullable = false, updatable = false)
-    public UUID getUserId() { return this._patientId; }
-    protected void setUserId(UUID userId) { this._patientId = userId; }
+    public UUID getPatientId() { return this._patientId; }
+    protected void setPatientId(UUID userId) { this._patientId = userId; }
 
     @Column(name = "birthDate", nullable = false)
     public LocalDate getBirthDate() { return this._birthDate; }

@@ -10,7 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = "dev.indy.lifelink.repository")
 @EntityScan(basePackages = "dev.indy.lifelink.model")
 @ComponentScan(basePackages = {
-    "dev.indy.lifelink.service"
+        "dev.indy.lifelink.auth", "dev.indy.lifelink.config", "dev.indy.lifelink.controller", "dev.indy.lifelink.core",
+        "dev.indy.lifelink.service"
 })
 public class Main {
     public static void main(String[] args) {

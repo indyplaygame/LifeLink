@@ -10,6 +10,7 @@ import dev.indy.lifelink.model.request.CreatePatientRequest;
 import dev.indy.lifelink.model.request.CreatePersonRequest;
 import dev.indy.lifelink.model.request.LoginRequest;
 import dev.indy.lifelink.repository.PatientRepository;
+import dev.indy.lifelink.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,7 +65,7 @@ public class AuthService {
         );
     }
 
-    public Patient createPatient(HttpSession session, CreatePatientRequest body) {
+    public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException {
         if(this.userWithPeselExists(body.pesel())) {
             throw new PatientExistsException();
         }
@@ -73,7 +74,7 @@ public class AuthService {
         final Person emergencyContact = this.createPerson(body.emergencyContact());
 
         final Patient patient = new Patient(
-            LocalDate.parse(body.dateOfBirth()),
+            Util.parseDate(body.dateOfBirth()),
             body.email(),
             body.pesel(),
             this.hashPassword(body.password()),
@@ -85,7 +86,7 @@ public class AuthService {
         return this._patientRepository.save(patient);
     }
 
-    public Patient authenticate(HttpSession session, LoginRequest body) {
+    public Patient authenticate(HttpSession session, LoginRequest body) throws InvalidLoginCredentialsException {
         final Patient patient = this._patientRepository.findByPesel(body.pesel());
         if(patient == null || !this.verifyPassword(body.password(), patient.getPasswordHash()))
             throw new InvalidLoginCredentialsException();
@@ -98,6 +99,10 @@ public class AuthService {
         if(session != null) session.invalidate();
     }
 
+    public boolean isAuthenticated(HttpSession session) {
+        return this.getActivePatient(session) != null;
+    }
+
     public Patient getActivePatient(HttpSession session) {
         if(session == null) return null;
 
@@ -108,6 +113,6 @@ public class AuthService {
     }
 
     public void setActivePatient(HttpSession session, Patient patient) {
-        session.setAttribute(ACTIVE_PATIENT_SESSION_KEY, patient.getUserId());
+        session.setAttribute(ACTIVE_PATIENT_SESSION_KEY, patient.getPatientId());
     }
 }

@@ -10,7 +10,7 @@ public class ValidPeselValidator implements ConstraintValidator<ValidPesel, Stri
         if(pesel == null || pesel.length() != 11 || !pesel.matches("\\d{11}")) return false;
 
         int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
-        char[] digits = pesel.substring(10).toCharArray();
+        char[] digits = pesel.substring(0, 11).toCharArray();
 
         int sum = 0;
         for(int i = 0; i < weights.length; i++)
