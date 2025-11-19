@@ -74,10 +74,6 @@ public class AuthService {
         if(this.isAuthenticated(session)) throw new SessionActiveException();
         if(this.userWithPeselExists(body.pesel())) throw new PatientExistsException();
 
-        System.out.println(body.dateOfBirth());
-        System.out.println(body.dateOfBirth().matches(Util.DATE_REGEXP));
-        System.out.println(Util.parseDate(body.dateOfBirth()));
-
         final Person person = this.createPerson(body.person());
         final Person emergencyContact = this.createPerson(body.emergencyContact());
 

@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
+import static dev.indy.lifelink.validation.ValidationGroups.*;
+
 public record CreateAddressRequest (
     @JsonProperty(defaultValue = "POLAND")
     String country,

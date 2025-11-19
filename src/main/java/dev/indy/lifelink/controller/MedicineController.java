@@ -53,7 +53,7 @@ public class MedicineController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Medicine> update(
             @PathVariable Long id,
-            @Valid @RequestBody AddMedicineRequest body
+            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicineRequest body
     ) {
         try {
             Medicine medicine = this._medicineService.updateMedicine(id, body);

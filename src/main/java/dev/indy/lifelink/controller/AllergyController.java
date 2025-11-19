@@ -52,7 +52,7 @@ public class AllergyController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Allergy> update(
         @PathVariable Long id,
-        @Valid @RequestBody AddAllergyRequest body
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddAllergyRequest body
     ) {
         try {
             Allergy allergy = this._allergyService.updateAllergy(id, body);

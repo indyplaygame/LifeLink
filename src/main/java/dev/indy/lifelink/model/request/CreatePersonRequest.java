@@ -8,6 +8,8 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.validation.annotation.Validated;
 
+import static dev.indy.lifelink.validation.ValidationGroups.*;
+
 public record CreatePersonRequest(
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "First name cannot be empty")
     @Pattern(regexp = Util.ALPHABETIC_REGEXP, message = "First name can only contain alphabetic characters")

@@ -2,6 +2,7 @@ package dev.indy.lifelink.model.request;
 
 import dev.indy.lifelink.util.Util;
 import dev.indy.lifelink.validation.ValidationGroups;
+import dev.indy.lifelink.validation.constraints.ValidDate;
 import dev.indy.lifelink.validation.constraints.ValidPesel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -9,9 +10,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
+import static dev.indy.lifelink.validation.ValidationGroups.*;
+
 public record CreatePatientRequest(
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Date of birth cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Date of birth must be in the format DD-MM-YYYY")
+    @ValidDate(message = "Diagnosis date must be in the format DD-MM-YYYY")
     String dateOfBirth,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Email cannot be empty")

@@ -6,12 +6,15 @@ import java.time.format.DateTimeFormatter;
 public class Util {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
-    public static final String DATE_REGEXP = "^\\d{2}-\\d{2}-\\d{4}$";
     public static final String GENERIC_NAME_REGEXP = "(?i)^[a-z0-9 ',-]+$";
     public static final String ALPHABETIC_REGEXP = "(?i)^[A-Z]+$";
 
     public static LocalDate parseDate(String date) {
-        return date != null && date.matches(DATE_REGEXP) ? LocalDate.parse(date, DATE_FORMATTER) : null;
+        try {
+            return LocalDate.parse(date, DATE_FORMATTER);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public static String capitalize(String str) {
