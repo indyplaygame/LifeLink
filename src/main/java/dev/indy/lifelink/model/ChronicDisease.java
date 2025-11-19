@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -16,6 +17,13 @@ public class ChronicDisease {
     private Patient _patient;
 
     protected ChronicDisease() {}
+
+    public ChronicDisease(String name, String notes, LocalDate diagnosisDate, Patient patient) {
+        this.setName(name);
+        this.setNotes(notes);
+        this.setDiagnosisDate(diagnosisDate);
+        this.setPatient(patient);
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +43,7 @@ public class ChronicDisease {
     public LocalDate getDiagnosisDate() { return this._diagnosisDate; }
     public void setDiagnosisDate(LocalDate diagnosisDate) { this._diagnosisDate = diagnosisDate; }
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "patientId", nullable = false)
     public Patient getPatient() { return this._patient; }

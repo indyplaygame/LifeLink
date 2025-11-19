@@ -1,10 +1,8 @@
 package dev.indy.lifelink.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.util.UUID;
 
 @Entity
 @Access(AccessType.PROPERTY)

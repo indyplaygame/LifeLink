@@ -4,10 +4,10 @@ import dev.indy.lifelink.auth.AuthRequired;
 import dev.indy.lifelink.decorators.pagination.Paginated;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.HttpException;
-import dev.indy.lifelink.model.Allergy;
-import dev.indy.lifelink.model.request.AddAllergyRequest;
+import dev.indy.lifelink.model.ChronicDisease;
+import dev.indy.lifelink.model.request.AddChronicDiseaseRequest;
 import dev.indy.lifelink.model.response.PageResponse;
-import dev.indy.lifelink.service.AllergyService;
+import dev.indy.lifelink.service.ChronicDiseaseService;
 import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,30 +19,30 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/allergies")
-public class AllergyController {
-    private final AllergyService _allergyService;
+@RequestMapping("/chronicDiseases")
+public class ChronicDiseaseController {
+    private final ChronicDiseaseService _chronicDiseaseService;
 
     @Autowired
-    public AllergyController(AllergyService allergyService) {
-        this._allergyService = allergyService;
+    public ChronicDiseaseController(ChronicDiseaseService allergyService) {
+        this._chronicDiseaseService = allergyService;
     }
 
     @AuthRequired
     @PostMapping(value = "/add")
-    public ResponseEntity<Allergy> add(
-        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddAllergyRequest body, HttpSession session
+    public ResponseEntity<ChronicDisease> add(
+        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddChronicDiseaseRequest body, HttpSession session
     ) {
-        Allergy allergy = this._allergyService.addAllergy(session, body);
-        return ResponseEntity.status(HttpStatus.CREATED).body(allergy);
+        ChronicDisease disease = this._chronicDiseaseService.addChronicDisease(session, body);
+        return ResponseEntity.status(HttpStatus.CREATED).body(disease);
     }
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<Allergy> get(@PathVariable Long id) {
+    public ResponseEntity<ChronicDisease> get(@PathVariable Long id) {
         try {
-            Allergy allergy = this._allergyService.getAllergy(id);
-            return ResponseEntity.ok(allergy);
+            ChronicDisease disease = this._chronicDiseaseService.getChronicDisease(id);
+            return ResponseEntity.ok(disease);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -50,13 +50,13 @@ public class AllergyController {
 
     @AuthRequired
     @PutMapping("/{id}/update")
-    public ResponseEntity<Allergy> update(
+    public ResponseEntity<ChronicDisease> update(
         @PathVariable Long id,
-        @Valid @RequestBody AddAllergyRequest body
+        @Valid @RequestBody AddChronicDiseaseRequest body
     ) {
         try {
-            Allergy allergy = this._allergyService.updateAllergy(id, body);
-            return ResponseEntity.ok(allergy);
+            ChronicDisease disease = this._chronicDiseaseService.updateChronicDisease(id, body);
+            return ResponseEntity.ok(disease);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -66,7 +66,7 @@ public class AllergyController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
-            this._allergyService.deleteAllergy(id);
+            this._chronicDiseaseService.deleteChronicDisease(id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -76,7 +76,7 @@ public class AllergyController {
     @Paginated(defaultSize = 20)
     @AuthRequired
     @GetMapping("/list")
-    public ResponseEntity<PageResponse<Allergy>> list(Pageable pageable, HttpSession session) {
-        return ResponseEntity.ok(PageResponse.from(this._allergyService.listPatientAllergies(session, pageable)));
+    public ResponseEntity<PageResponse<ChronicDisease>> list(Pageable pageable, HttpSession session) {
+        return ResponseEntity.ok(PageResponse.from(this._chronicDiseaseService.listPatientChronicDiseases(session, pageable)));
     }
 }
