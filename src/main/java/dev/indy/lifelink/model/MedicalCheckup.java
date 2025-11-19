@@ -7,10 +7,12 @@ import java.time.LocalDate;
 @Entity
 @Access(AccessType.PROPERTY)
 @Table(name = "medicalCheckups")
+@SuppressWarnings("AssociationNotMarkedInspection")
 public class MedicalCheckup {
     private long _checkupId;
     private String _checkupDetails;
     private LocalDate _checkupDate;
+    private Patient _patient;
 
     protected MedicalCheckup() {}
 
@@ -27,4 +29,9 @@ public class MedicalCheckup {
     @Column(name = "checkupDate", nullable = false)
     public LocalDate getCheckupDate() { return this._checkupDate; }
     public void setCheckupDate(LocalDate checkupDate) { this._checkupDate = checkupDate; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patientId", nullable = false)
+    public Patient getPatient() { return this._patient; }
+    public void setPatient(Patient patient) { this._patient = patient; }
 }

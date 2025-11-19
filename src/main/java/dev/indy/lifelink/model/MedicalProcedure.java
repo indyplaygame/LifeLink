@@ -7,11 +7,13 @@ import java.time.LocalDate;
 @Entity
 @Access(AccessType.PROPERTY)
 @Table(name = "medicalProcedures")
+@SuppressWarnings("AssociationNotMarkedInspection")
 public class MedicalProcedure {
     private long _procedureId;
     private String _procedureCode;
     private String _procedureDescription;
     private LocalDate _procedureDate;
+    private Patient _patient;
 
     protected MedicalProcedure() {}
 
@@ -32,4 +34,9 @@ public class MedicalProcedure {
     @Column(name = "procedureDate", nullable = false)
     public LocalDate getProcedureDate() { return this._procedureDate; }
     public void setProcedureDate(LocalDate procedureDate) { this._procedureDate = procedureDate; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patientId", nullable = false)
+    public Patient getPatient() { return this._patient; }
+    public void setPatient(Patient patient) { this._patient = patient; }
 }

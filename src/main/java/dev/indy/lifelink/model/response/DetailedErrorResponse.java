@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.Instant;
 
-public record DetailedErrorMessage(
+public record DetailedErrorResponse(
     String timestamp,
     int status,
     String error,
     String path,
     @JsonProperty("details") Object body
 ) {
-    public DetailedErrorMessage(String timestamp, int status, String error, String path, Object body) {
+    public DetailedErrorResponse(String timestamp, int status, String error, String path, Object body) {
         this.timestamp = timestamp;
         this.status = status;
         this.error = error;
@@ -19,7 +19,7 @@ public record DetailedErrorMessage(
         this.body = body;
     }
 
-    public DetailedErrorMessage(int status, String error, String path, Object body) {
+    public DetailedErrorResponse(int status, String error, String path, Object body) {
         this(Instant.now().toString(), status, error, path, body);
     }
 }

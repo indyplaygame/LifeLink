@@ -1,6 +1,12 @@
 package dev.indy.lifelink.repository;
 
 import dev.indy.lifelink.model.Allergy;
+import dev.indy.lifelink.model.Patient;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AllergyRepository extends JpaRepository<Allergy, Long> {}
+public interface AllergyRepository extends JpaRepository<Allergy, Long> {
+    Allergy findByAllergyId(long id);
+    Page<Allergy> findAllByPatient(Patient patient, Pageable pageable);
+}

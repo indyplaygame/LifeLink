@@ -5,10 +5,12 @@ import jakarta.persistence.*;
 @Entity
 @Access(AccessType.PROPERTY)
 @Table(name = "medicalDiagnoses")
+@SuppressWarnings("AssociationNotMarkedInspection")
 public class MedicalDiagnosis {
     private long _diagnosisId;
     private String _icdCode;
     private String _description;
+    private Patient _patient;
 
     protected MedicalDiagnosis() {}
 
@@ -25,4 +27,9 @@ public class MedicalDiagnosis {
     @Column(name = "description", nullable = false, length = 1000)
     public String getDescription() { return this._description; }
     public void setDescription(String description) { this._description = description; }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "patientId", nullable = false)
+    public Patient getPatient() { return this._patient; }
+    public void setPatient(Patient patient) { this._patient = patient; }
 }

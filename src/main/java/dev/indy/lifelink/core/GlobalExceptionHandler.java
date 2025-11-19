@@ -1,7 +1,7 @@
 package dev.indy.lifelink.core;
 
 import dev.indy.lifelink.exception.HttpException;
-import dev.indy.lifelink.model.response.DetailedErrorMessage;
+import dev.indy.lifelink.model.response.DetailedErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<DetailedErrorMessage> handleValidationExceptions(MethodArgumentNotValidException e, HttpServletRequest request) {
+    public ResponseEntity<DetailedErrorResponse> handleValidationExceptions(MethodArgumentNotValidException e, HttpServletRequest request) {
         Map<String, List<String>> errors = new HashMap<>();
 
         e.getBindingResult().getFieldErrors().forEach(fieldError -> {
@@ -26,7 +26,7 @@ public class GlobalExceptionHandler {
             errors.computeIfAbsent(field, k -> new java.util.ArrayList<>()).add(errorMessage);
         });
 
-        return new ResponseEntity<>(new DetailedErrorMessage(
+        return new ResponseEntity<>(new DetailedErrorResponse(
             HttpStatus.BAD_REQUEST.value(),
             "Bad Request",
             request.getRequestURI(),
@@ -35,10 +35,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpException.class)
-    public ResponseEntity<DetailedErrorMessage> handleHttpExceptions(HttpException e, HttpServletRequest request) {
+    public ResponseEntity<DetailedErrorResponse> handleHttpExceptions(HttpException e, HttpServletRequest request) {
         HttpStatus status = e.getStatus();
 
-        return new ResponseEntity<>(new DetailedErrorMessage(
+        return new ResponseEntity<>(new DetailedErrorResponse(
             status.value(),
             status.getReasonPhrase(),
             request.getRequestURI(),

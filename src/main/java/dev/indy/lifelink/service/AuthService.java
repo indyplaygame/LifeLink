@@ -11,12 +11,16 @@ import dev.indy.lifelink.model.request.CreatePersonRequest;
 import dev.indy.lifelink.model.request.LoginRequest;
 import dev.indy.lifelink.repository.PatientRepository;
 import dev.indy.lifelink.util.Util;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Service

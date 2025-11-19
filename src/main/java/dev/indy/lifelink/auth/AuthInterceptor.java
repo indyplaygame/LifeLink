@@ -21,12 +21,20 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if(handler instanceof HandlerMethod method) {
-            if(method.getMethodAnnotation(AuthRequired.class) == null && !method.getBeanType().isAnnotationPresent(AuthRequired.class)) return true;
+            AuthRequired annotation = method.getMethodAnnotation(AuthRequired.class);
+            if(annotation == null && !method.getBeanType().isAnnotationPresent(AuthRequired.class)) return true;
 
-            HttpSession session = request.getSession(false);
-            if(!this._authService.isAuthenticated(session)) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return false;
+            AuthMethod authMethod = annotation.value();
+            switch(authMethod) {
+                case SESSION:
+                    HttpSession session = request.getSession(false);
+                    if(!this._authService.isAuthenticated(session)) {
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        return false;
+                    }
+                    break;
+                case TOKEN:
+                    break;
             }
         }
 
