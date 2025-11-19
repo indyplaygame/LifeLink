@@ -2,6 +2,7 @@ package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.InvalidLoginCredentialsException;
 import dev.indy.lifelink.exception.PatientExistsException;
+import dev.indy.lifelink.exception.SessionActiveException;
 import dev.indy.lifelink.model.Address;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.Person;
@@ -69,7 +70,8 @@ public class AuthService {
         );
     }
 
-    public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException {
+    public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
+        if(this.isAuthenticated(session)) throw new SessionActiveException();
         if(this.userWithPeselExists(body.pesel())) throw new PatientExistsException();
 
         System.out.println(body.dateOfBirth());
@@ -92,7 +94,9 @@ public class AuthService {
         return this._patientRepository.save(patient);
     }
 
-    public Patient authenticate(HttpSession session, LoginRequest body) throws InvalidLoginCredentialsException {
+    public Patient authenticate(HttpSession session, LoginRequest body) throws InvalidLoginCredentialsException, SessionActiveException {
+        if(this.isAuthenticated(session)) throw new SessionActiveException();
+
         final Patient patient = this._patientRepository.findByPesel(body.pesel());
         if(patient == null || !this.verifyPassword(body.password(), patient.getPasswordHash()))
             throw new InvalidLoginCredentialsException();
