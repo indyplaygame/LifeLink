@@ -14,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -61,5 +60,11 @@ public class AuthController {
     public ResponseEntity<MessageResponse> logout(HttpSession session) {
         this._authService.logout(session);
         return ResponseEntity.ok(new MessageResponse("Logged out successfully."));
+    }
+
+    @GetMapping("/session-status")
+    public ResponseEntity<Map<String, Boolean>> session(HttpSession session) {
+        boolean loggedIn = this._authService.isAuthenticated(session);
+        return ResponseEntity.ok(Map.of("active", loggedIn));
     }
 }
