@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,13 +15,19 @@ public class MedicalDiagnosis {
 
     protected MedicalDiagnosis() {}
 
+    public MedicalDiagnosis(String icdCode, String description, Patient patient) {
+        this._icdCode = icdCode;
+        this._description = description;
+        this._patient = patient;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diagnosisId", nullable = false, updatable = false)
     public long getDiagnosisId() { return this._diagnosisId; }
     protected void setDiagnosisId(long diagnosisId) { this._diagnosisId = diagnosisId; }
 
-    @Column(name = "icdCode", nullable = false, length = 10)
+    @Column(name = "icdCode", nullable = false, length = 8)
     public String getIcdCode() { return this._icdCode; }
     public void setIcdCode(String icdCode) { this._icdCode = icdCode; }
 
@@ -28,6 +35,7 @@ public class MedicalDiagnosis {
     public String getDescription() { return this._description; }
     public void setDescription(String description) { this._description = description; }
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patientId", nullable = false)
     public Patient getPatient() { return this._patient; }
