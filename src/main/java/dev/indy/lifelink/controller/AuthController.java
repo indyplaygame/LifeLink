@@ -1,5 +1,6 @@
 package dev.indy.lifelink.controller;
 
+import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.exception.InvalidLoginCredentialsException;
 import dev.indy.lifelink.exception.PatientExistsException;
 import dev.indy.lifelink.model.request.CreatePatientRequest;
@@ -37,7 +38,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new MessageResponse("Patient registered successfully."));
         } catch(PatientExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessage(e.getMessage()));
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class AuthController {
 
             return ResponseEntity.ok(new MessageResponse("Logged in successfully."));
         } catch(InvalidLoginCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessage(e.getMessage()));
+            throw new HttpException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 

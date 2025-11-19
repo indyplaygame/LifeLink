@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
 public record LoginRequest(
+    @NotBlank(message = "PESEL cannot be empty")
     @ValidPesel
     String pesel,
 
