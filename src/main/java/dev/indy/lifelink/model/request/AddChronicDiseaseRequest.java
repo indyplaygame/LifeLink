@@ -16,6 +16,6 @@ public record AddChronicDiseaseRequest(
     String notes,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Diagnosis date cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Diagnosis date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Diagnosis date must be in the format DD-MM-YYYY")
     String diagnosisDate
 ) {}

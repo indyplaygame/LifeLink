@@ -14,7 +14,7 @@ public record AddVaccinationRequest(
     Integer doseNumber,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Vaccination date cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Vaccination date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Vaccination date must be in the format DD-MM-YYYY")
     String vaccinationDate,
 
     @Length(max = 1000, message = "Notes cannot exceed 1000 characters")

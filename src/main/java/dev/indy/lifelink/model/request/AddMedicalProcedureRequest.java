@@ -17,6 +17,6 @@ public record AddMedicalProcedureRequest(
     String procedureDescription,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Procedure date cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Procedure date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Procedure date must be in the format DD-MM-YYYY")
     String procedureDate
 ) {}

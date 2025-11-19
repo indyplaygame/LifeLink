@@ -12,6 +12,6 @@ public record AddMedicalCheckupRequest(
     String details,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Checkup date cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Checkup date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Checkup date must be in the format DD-MM-YYYY")
     String date
 ) {}

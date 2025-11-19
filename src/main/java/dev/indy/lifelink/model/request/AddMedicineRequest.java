@@ -21,14 +21,14 @@ public record AddMedicineRequest(
     String dosage,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Frequency cannot be empty")
-    @Pattern(regexp = "^[a-zA-Z0-9 ',/-]+$", message = "Frequency can only contain alphanumeric characters, apostrophes, commas, hyphens, slashes, and spaces")
+    @Pattern(regexp = "(?i)^[a-z0-9 ',/-]+$", message = "Frequency can only contain alphanumeric characters, apostrophes, commas, hyphens, slashes, and spaces")
     @Length(max = 50, message = "Frequency cannot exceed 50 characters")
     String frequency,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Start date cannot be empty")
-    @Pattern(regexp = Util.DATE_REGEXP, message = "Start date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Start date must be in the format DD-MM-YYYY")
     String startDate,
 
-    @Pattern(regexp = Util.DATE_REGEXP, message = "End date must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "End date must be in the format DD-MM-YYYY")
     String endDate
 ) {}
