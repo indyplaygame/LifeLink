@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Entity
 @Access(AccessType.PROPERTY)
-@Table(name = "chronicDiseases")
+@Table(name = "chronic_diseases")
 @SuppressWarnings("AssociationNotMarkedInspection")
 public class ChronicDisease {
     private long _diseaseId;

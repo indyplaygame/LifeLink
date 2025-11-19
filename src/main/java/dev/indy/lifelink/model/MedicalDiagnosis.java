@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Access(AccessType.PROPERTY)
-@Table(name = "medicalDiagnoses")
+@Table(name = "medical_diagnoses")
 @SuppressWarnings("AssociationNotMarkedInspection")
 public class MedicalDiagnosis {
     private long _diagnosisId;

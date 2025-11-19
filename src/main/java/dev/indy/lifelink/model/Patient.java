@@ -11,7 +11,7 @@ import java.util.UUID;
 @SuppressWarnings("AssociationNotMarkedInspection")
 public class Patient {
     private UUID _patientId;
-    private LocalDate _birthDate;
+    private LocalDate _dateOfBirth;
     private String _email;
     private String _pesel;
     private String _nfcTagHash;
@@ -23,9 +23,9 @@ public class Patient {
     protected Patient() {}
 
     public Patient(
-        LocalDate birthDate, String email, String pesel, String passwordHash, Person person, Person contactPerson
+        LocalDate dateOfBirth, String email, String pesel, String passwordHash, Person person, Person contactPerson
     ) {
-        this._birthDate = birthDate;
+        this._dateOfBirth = dateOfBirth;
         this._email = email;
         this._pesel = pesel;
         this._passwordHash = passwordHash;
@@ -39,9 +39,9 @@ public class Patient {
     public UUID getPatientId() { return this._patientId; }
     protected void setPatientId(UUID userId) { this._patientId = userId; }
 
-    @Column(name = "birthDate", nullable = false)
-    public LocalDate getBirthDate() { return this._birthDate; }
-    public void setBirthDate(LocalDate birthDate) { this._birthDate = birthDate; }
+    @Column(name = "dateOfBirth", nullable = false)
+    public LocalDate getDateOfBirth() { return this._dateOfBirth; }
+    public void setDateOfBirth(LocalDate dateOfBirth) { this._dateOfBirth = dateOfBirth; }
 
     @Column(name = "email", nullable = false, length = 100, unique = true)
     public String getEmail() { return this._email; }
