@@ -52,7 +52,7 @@ public class ChronicDiseaseController {
     @PutMapping("/{id}/update")
     public ResponseEntity<ChronicDisease> update(
         @PathVariable Long id,
-        @Valid @RequestBody AddChronicDiseaseRequest body
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddChronicDiseaseRequest body
     ) {
         try {
             ChronicDisease disease = this._chronicDiseaseService.updateChronicDisease(id, body);

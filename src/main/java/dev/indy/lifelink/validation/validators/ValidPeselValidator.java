@@ -6,7 +6,7 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class ValidPeselValidator implements ConstraintValidator<ValidPesel, String> {
     @Override
-    public boolean isValid(String pesel, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(String pesel, ConstraintValidatorContext context) {
         if(pesel == null) return true;
         if(pesel.length() != 11 || !pesel.matches("\\d{11}")) return false;
 

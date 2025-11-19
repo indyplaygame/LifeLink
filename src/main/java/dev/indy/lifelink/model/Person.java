@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model;
 
+import dev.indy.lifelink.util.Util;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -24,9 +25,9 @@ public class Person {
     protected Person() {}
 
     public Person(String firstName, String middleName, String lastName, String phoneNumber, Gender gender, Address address) {
-        this._firstName = firstName;
-        this._middleName = middleName;
-        this._lastName = lastName;
+        this._firstName = Util.capitalize(firstName);
+        this._middleName = Util.capitalize(middleName);
+        this._lastName = Util.capitalize(lastName);
         this._phoneNumber = phoneNumber;
         this._gender = gender;
         this._address = address;

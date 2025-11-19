@@ -19,7 +19,7 @@ public class MedicalProcedure {
     protected MedicalProcedure() {}
 
     public MedicalProcedure(String cptCode, String procedureDescription, LocalDate procedureDate, Patient patient) {
-        this._cptCode = cptCode;
+        this._cptCode = cptCode.toUpperCase();
         this._procedureDescription = procedureDescription;
         this._procedureDate = procedureDate;
         this._patient = patient;

@@ -16,7 +16,7 @@ public class MedicalDiagnosis {
     protected MedicalDiagnosis() {}
 
     public MedicalDiagnosis(String icdCode, String description, Patient patient) {
-        this._icdCode = icdCode;
+        this._icdCode = icdCode.toUpperCase();
         this._description = description;
         this._patient = patient;
     }

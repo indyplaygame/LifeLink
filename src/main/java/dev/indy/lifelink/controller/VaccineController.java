@@ -56,7 +56,7 @@ public class VaccineController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Vaccine> update(
             @PathVariable Long id,
-            @Valid @RequestBody AddVaccineRequest body
+            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddVaccineRequest body
     ) {
         try {
             Vaccine vaccine = this._vaccineService.updateVaccine(id, body);

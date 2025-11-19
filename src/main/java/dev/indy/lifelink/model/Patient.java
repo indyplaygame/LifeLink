@@ -26,7 +26,7 @@ public class Patient {
         LocalDate dateOfBirth, String email, String pesel, String passwordHash, Person person, Person contactPerson
     ) {
         this._dateOfBirth = dateOfBirth;
-        this._email = email;
+        this._email = email.toLowerCase();
         this._pesel = pesel;
         this._passwordHash = passwordHash;
         this._person = person;

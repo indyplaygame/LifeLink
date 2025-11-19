@@ -14,7 +14,7 @@ public class Address {
     protected Address() {}
 
     public Address(String country, String postalCode, String city, String street, String buildingNumber) {
-        this._country = country;
+        this._country = country.toUpperCase();
         this._postalCode = postalCode;
         this._city = city;
         this._street = street;

@@ -3,6 +3,7 @@ package dev.indy.lifelink.controller;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.exception.InvalidLoginCredentialsException;
 import dev.indy.lifelink.exception.PatientExistsException;
+import dev.indy.lifelink.exception.SessionActiveException;
 import dev.indy.lifelink.model.request.CreatePatientRequest;
 import dev.indy.lifelink.model.request.LoginRequest;
 import dev.indy.lifelink.model.response.MessageResponse;
@@ -13,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
@@ -36,7 +36,7 @@ public class AuthController {
             this._authService.createPatient(session, body);
 
             return ResponseEntity.ok(new MessageResponse("Patient registered successfully."));
-        } catch(PatientExistsException e) {
+        } catch(PatientExistsException | SessionActiveException e) {
             throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
@@ -51,6 +51,8 @@ public class AuthController {
             return ResponseEntity.ok(new MessageResponse("Logged in successfully."));
         } catch(InvalidLoginCredentialsException e) {
             throw new HttpException(HttpStatus.UNAUTHORIZED, e.getMessage());
+        } catch(SessionActiveException e) {
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
@@ -58,5 +60,11 @@ public class AuthController {
     public ResponseEntity<MessageResponse> logout(HttpSession session) {
         this._authService.logout(session);
         return ResponseEntity.ok(new MessageResponse("Logged out successfully."));
+    }
+
+    @GetMapping("/session-status")
+    public ResponseEntity<Map<String, Boolean>> session(HttpSession session) {
+        boolean loggedIn = this._authService.isAuthenticated(session);
+        return ResponseEntity.ok(Map.of("active", loggedIn));
     }
 }
