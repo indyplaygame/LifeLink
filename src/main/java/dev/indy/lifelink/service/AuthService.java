@@ -70,9 +70,7 @@ public class AuthService {
     }
 
     public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException {
-        if(this.userWithPeselExists(body.pesel())) {
-            throw new PatientExistsException();
-        }
+        if(this.userWithPeselExists(body.pesel())) throw new PatientExistsException();
 
         final Person person = this.createPerson(body.person());
         final Person emergencyContact = this.createPerson(body.emergencyContact());

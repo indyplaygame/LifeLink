@@ -42,9 +42,9 @@ public class AllergyService {
         return allergy;
     }
 
-    public Allergy updateAllergy(long allergyId, AddAllergyRequest body) throws EntityNotFoundException {
-        Allergy allergy = this.getAllergy(allergyId);
-        if(allergy == null) throw new EntityNotFoundException(Allergy.class, allergyId);
+    public Allergy updateAllergy(long id, AddAllergyRequest body) throws EntityNotFoundException {
+        Allergy allergy = this.getAllergy(id);
+        if(allergy == null) throw new EntityNotFoundException(Allergy.class, id);
 
         if(body.name() != null) allergy.setName(body.name());
         if(body.description() != null) allergy.setDescription(body.description());
@@ -52,9 +52,9 @@ public class AllergyService {
         return this._allergyRepository.save(allergy);
     }
 
-    public void deleteAllergy(long allergyId) throws EntityNotFoundException {
-        Allergy allergy = this.getAllergy(allergyId);
-        if(allergy == null) throw new EntityNotFoundException(Allergy.class, allergyId);
+    public void deleteAllergy(long id) throws EntityNotFoundException {
+        Allergy allergy = this.getAllergy(id);
+        if(allergy == null) throw new EntityNotFoundException(Allergy.class, id);
 
         this._allergyRepository.delete(allergy);
     }

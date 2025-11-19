@@ -5,9 +5,10 @@ import dev.indy.lifelink.decorators.pagination.Paginated;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.model.ChronicDisease;
-import dev.indy.lifelink.model.request.AddChronicDiseaseRequest;
+import dev.indy.lifelink.model.Medicine;
+import dev.indy.lifelink.model.request.AddMedicineRequest;
 import dev.indy.lifelink.model.response.PageResponse;
-import dev.indy.lifelink.service.ChronicDiseaseService;
+import dev.indy.lifelink.service.MedicineService;
 import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -19,30 +20,30 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/chronicDiseases")
-public class ChronicDiseaseController {
-    private final ChronicDiseaseService _chronicDiseaseService;
+@RequestMapping("/medicines")
+public class MedicineController {
+    private final MedicineService _medicineService;
 
     @Autowired
-    public ChronicDiseaseController(ChronicDiseaseService chronicDiseaseService) {
-        this._chronicDiseaseService = chronicDiseaseService;
+    public MedicineController(MedicineService medicineService) {
+        this._medicineService = medicineService;
     }
 
     @AuthRequired
     @PostMapping(value = "/add")
-    public ResponseEntity<ChronicDisease> add(
-        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddChronicDiseaseRequest body, HttpSession session
+    public ResponseEntity<Medicine> add(
+            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicineRequest body, HttpSession session
     ) {
-        ChronicDisease disease = this._chronicDiseaseService.addChronicDisease(session, body);
-        return ResponseEntity.status(HttpStatus.CREATED).body(disease);
+        Medicine medicine = this._medicineService.addMedicine(session, body);
+        return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
     }
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<ChronicDisease> get(@PathVariable Long id) {
+    public ResponseEntity<Medicine> get(@PathVariable Long id) {
         try {
-            ChronicDisease disease = this._chronicDiseaseService.getChronicDisease(id);
-            return ResponseEntity.ok(disease);
+            Medicine medicine = this._medicineService.getMedicine(id);
+            return ResponseEntity.ok(medicine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -50,13 +51,13 @@ public class ChronicDiseaseController {
 
     @AuthRequired
     @PutMapping("/{id}/update")
-    public ResponseEntity<ChronicDisease> update(
-        @PathVariable Long id,
-        @Valid @RequestBody AddChronicDiseaseRequest body
+    public ResponseEntity<Medicine> update(
+            @PathVariable Long id,
+            @Valid @RequestBody AddMedicineRequest body
     ) {
         try {
-            ChronicDisease disease = this._chronicDiseaseService.updateChronicDisease(id, body);
-            return ResponseEntity.ok(disease);
+            Medicine medicine = this._medicineService.updateMedicine(id, body);
+            return ResponseEntity.ok(medicine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -66,7 +67,7 @@ public class ChronicDiseaseController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
-            this._chronicDiseaseService.deleteChronicDisease(id);
+            this._medicineService.deleteMedicine(id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -76,7 +77,7 @@ public class ChronicDiseaseController {
     @Paginated(defaultSize = 20)
     @AuthRequired
     @GetMapping("/list")
-    public ResponseEntity<PageResponse<ChronicDisease>> list(Pageable pageable, HttpSession session) {
-        return ResponseEntity.ok(PageResponse.from(this._chronicDiseaseService.listPatientChronicDiseases(session, pageable)));
+    public ResponseEntity<PageResponse<Medicine>> list(Pageable pageable, HttpSession session) {
+        return ResponseEntity.ok(PageResponse.from(this._medicineService.listPatientChronicDiseases(session, pageable)));
     }
 }

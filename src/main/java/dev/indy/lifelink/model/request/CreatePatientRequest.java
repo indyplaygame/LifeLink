@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model.request;
 
+import dev.indy.lifelink.util.Util;
 import dev.indy.lifelink.validation.ValidationGroups;
 import dev.indy.lifelink.validation.constraints.ValidPesel;
 import jakarta.validation.Valid;
@@ -10,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
 
 public record CreatePatientRequest(
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Date of birth cannot be empty")
-    @Pattern(groups = ValidationGroups.OnCreate.class, regexp = "^\\d{2}/\\d{2}/\\d{4}$", message = "Date of birth must be in the format DD/MM/YYYY")
+    @Pattern(regexp = Util.DATE_REGEXP, message = "Date of birth must be in the format DD/MM/YYYY")
     String dateOfBirth,
 
     @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Email cannot be empty")

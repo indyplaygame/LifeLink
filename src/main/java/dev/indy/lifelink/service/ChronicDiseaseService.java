@@ -1,10 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
-import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.ChronicDisease;
 import dev.indy.lifelink.model.Patient;
-import dev.indy.lifelink.model.request.AddAllergyRequest;
 import dev.indy.lifelink.model.request.AddChronicDiseaseRequest;
 import dev.indy.lifelink.repository.ChronicDiseaseRepository;
 import dev.indy.lifelink.util.Util;
@@ -40,15 +38,14 @@ public class ChronicDiseaseService {
 
     public ChronicDisease getChronicDisease(long id) throws EntityNotFoundException {
         ChronicDisease disease = this._chronicDiseaseRepository.findByDiseaseId(id);
-        if(disease == null)
-            throw new EntityNotFoundException(ChronicDisease.class, id);
+        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
 
         return disease;
     }
 
-    public ChronicDisease updateChronicDisease(long diseaseId, AddChronicDiseaseRequest body) throws EntityNotFoundException {
-        ChronicDisease disease = this.getChronicDisease(diseaseId);
-        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, diseaseId);
+    public ChronicDisease updateChronicDisease(long id, AddChronicDiseaseRequest body) throws EntityNotFoundException {
+        ChronicDisease disease = this.getChronicDisease(id);
+        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
 
         if(body.name() != null) disease.setName(body.name());
         if(body.notes() != null) disease.setNotes(body.notes());
@@ -57,9 +54,9 @@ public class ChronicDiseaseService {
         return this._chronicDiseaseRepository.save(disease);
     }
 
-    public void deleteChronicDisease(long diseaseId) throws EntityNotFoundException {
-        ChronicDisease disease = this.getChronicDisease(diseaseId);
-        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, diseaseId);
+    public void deleteChronicDisease(long id) throws EntityNotFoundException {
+        ChronicDisease disease = this.getChronicDisease(id);
+        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
 
         this._chronicDiseaseRepository.delete(disease);
     }
