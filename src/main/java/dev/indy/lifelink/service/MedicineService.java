@@ -48,7 +48,6 @@ public class MedicineService {
 
     public Medicine updateMedicine(long id, AddMedicineRequest body) throws EntityNotFoundException {
         Medicine medicine = this.getMedicine(id);
-        if(medicine == null) throw new EntityNotFoundException(Medicine.class, id);
 
         if(body.name() != null) medicine.setMedicineName(body.name());
         if(body.notes() != null) medicine.setNotes(body.notes());
@@ -62,12 +61,10 @@ public class MedicineService {
 
     public void deleteMedicine(long id) throws EntityNotFoundException {
         Medicine medicine = this.getMedicine(id);
-        if(medicine == null) throw new EntityNotFoundException(Medicine.class, id);
-
         this._medicineRepository.delete(medicine);
     }
 
-    public Page<Medicine> listPatientChronicDiseases(HttpSession session, Pageable pageable) {
+    public Page<Medicine> listPatientMedicines(HttpSession session, Pageable pageable) {
         Patient patient = this._authService.getActivePatient(session);
         return this._medicineRepository.findAllByPatient(patient, pageable);
     }

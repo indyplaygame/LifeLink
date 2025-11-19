@@ -45,7 +45,6 @@ public class ChronicDiseaseService {
 
     public ChronicDisease updateChronicDisease(long id, AddChronicDiseaseRequest body) throws EntityNotFoundException {
         ChronicDisease disease = this.getChronicDisease(id);
-        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
 
         if(body.name() != null) disease.setName(body.name());
         if(body.notes() != null) disease.setNotes(body.notes());
@@ -56,8 +55,6 @@ public class ChronicDiseaseService {
 
     public void deleteChronicDisease(long id) throws EntityNotFoundException {
         ChronicDisease disease = this.getChronicDisease(id);
-        if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
-
         this._chronicDiseaseRepository.delete(disease);
     }
 

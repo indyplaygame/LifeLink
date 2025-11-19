@@ -2,13 +2,16 @@ package dev.indy.lifelink.controller;
 
 import dev.indy.lifelink.auth.AuthRequired;
 import dev.indy.lifelink.decorators.pagination.Paginated;
+import dev.indy.lifelink.exception.EntityHasRelatedDataException;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.HttpException;
-import dev.indy.lifelink.model.ChronicDisease;
 import dev.indy.lifelink.model.Medicine;
+import dev.indy.lifelink.model.Vaccine;
 import dev.indy.lifelink.model.request.AddMedicineRequest;
+import dev.indy.lifelink.model.request.AddVaccineRequest;
 import dev.indy.lifelink.model.response.PageResponse;
 import dev.indy.lifelink.service.MedicineService;
+import dev.indy.lifelink.service.VaccineService;
 import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -20,30 +23,30 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/medicines")
-public class MedicineController {
-    private final MedicineService _medicineService;
+@RequestMapping("/vaccines")
+public class VaccineController {
+    private final VaccineService _vaccineService;
 
     @Autowired
-    public MedicineController(MedicineService medicineService) {
-        this._medicineService = medicineService;
+    public VaccineController(VaccineService vaccineService) {
+        this._vaccineService = vaccineService;
     }
 
     @AuthRequired
     @PostMapping(value = "/add")
-    public ResponseEntity<Medicine> add(
-            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicineRequest body, HttpSession session
+    public ResponseEntity<Vaccine> add(
+            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddVaccineRequest body, HttpSession session
     ) {
-        Medicine medicine = this._medicineService.addMedicine(session, body);
-        return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
+        Vaccine vaccine = this._vaccineService.addVaccine(session, body);
+        return ResponseEntity.status(HttpStatus.CREATED).body(vaccine);
     }
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<Medicine> get(@PathVariable Long id) {
+    public ResponseEntity<Vaccine> get(@PathVariable Long id) {
         try {
-            Medicine medicine = this._medicineService.getMedicine(id);
-            return ResponseEntity.ok(medicine);
+            Vaccine vaccine = this._vaccineService.getVaccine(id);
+            return ResponseEntity.ok(vaccine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -51,13 +54,13 @@ public class MedicineController {
 
     @AuthRequired
     @PutMapping("/{id}/update")
-    public ResponseEntity<Medicine> update(
+    public ResponseEntity<Vaccine> update(
             @PathVariable Long id,
-            @Valid @RequestBody AddMedicineRequest body
+            @Valid @RequestBody AddVaccineRequest body
     ) {
         try {
-            Medicine medicine = this._medicineService.updateMedicine(id, body);
-            return ResponseEntity.ok(medicine);
+            Vaccine vaccine = this._vaccineService.updateVaccine(id, body);
+            return ResponseEntity.ok(vaccine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
         }
@@ -67,17 +70,19 @@ public class MedicineController {
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         try {
-            this._medicineService.deleteMedicine(id);
+            this._vaccineService.deleteVaccine(id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch(EntityHasRelatedDataException e) {
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
     @Paginated(defaultSize = 20)
     @AuthRequired
     @GetMapping("/list")
-    public ResponseEntity<PageResponse<Medicine>> list(Pageable pageable, HttpSession session) {
-        return ResponseEntity.ok(PageResponse.from(this._medicineService.listPatientMedicines(session, pageable)));
+    public ResponseEntity<PageResponse<Vaccine>> list(Pageable pageable, HttpSession session) {
+        return ResponseEntity.ok(PageResponse.from(this._vaccineService.listPatientVaccines(session, pageable)));
     }
 }
