@@ -1,10 +1,10 @@
 package dev.indy.lifelink.controller;
 
+import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.exception.InvalidLoginCredentialsException;
 import dev.indy.lifelink.exception.PatientExistsException;
 import dev.indy.lifelink.model.request.CreatePatientRequest;
 import dev.indy.lifelink.model.request.LoginRequest;
-import dev.indy.lifelink.model.response.ErrorMessage;
 import dev.indy.lifelink.model.response.MessageResponse;
 import dev.indy.lifelink.service.AuthService;
 import dev.indy.lifelink.validation.ValidationGroups;
@@ -29,7 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(
+    public ResponseEntity<MessageResponse> register(
         @Validated(ValidationGroups.OnCreate.class) @RequestBody CreatePatientRequest body, HttpSession session
     ) {
         try {
@@ -37,12 +37,12 @@ public class AuthController {
 
             return ResponseEntity.ok(new MessageResponse("Patient registered successfully."));
         } catch(PatientExistsException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorMessage(e.getMessage()));
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Object> login(
+    public ResponseEntity<MessageResponse> login(
         @Validated @RequestBody LoginRequest body, HttpSession session
     ) {
         try {
@@ -50,12 +50,12 @@ public class AuthController {
 
             return ResponseEntity.ok(new MessageResponse("Logged in successfully."));
         } catch(InvalidLoginCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessage(e.getMessage()));
+            throw new HttpException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Object> logout(HttpSession session) {
+    public ResponseEntity<MessageResponse> logout(HttpSession session) {
         this._authService.logout(session);
         return ResponseEntity.ok(new MessageResponse("Logged out successfully."));
     }

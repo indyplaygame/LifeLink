@@ -7,7 +7,8 @@ import jakarta.validation.ConstraintValidatorContext;
 public class ValidPeselValidator implements ConstraintValidator<ValidPesel, String> {
     @Override
     public boolean isValid(String pesel, ConstraintValidatorContext constraintValidatorContext) {
-        if(pesel == null || pesel.length() != 11 || !pesel.matches("\\d{11}")) return false;
+        if(pesel == null) return true;
+        if(pesel.length() != 11 || !pesel.matches("\\d{11}")) return false;
 
         int[] weights = {1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
         char[] digits = pesel.substring(0, 11).toCharArray();

@@ -1,5 +1,7 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -17,6 +19,14 @@ public class Vaccination {
     private Patient _patient;
 
     protected Vaccination() {}
+
+    public Vaccination(int doseNumber, LocalDate vaccinationDate, String notes, Vaccine vaccine, Patient patient) {
+        this._doseNumber = doseNumber;
+        this._vaccinationDate = vaccinationDate;
+        this._notes = notes;
+        this._vaccine = vaccine;
+        this._patient = patient;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,11 +46,12 @@ public class Vaccination {
     public String getNotes() { return this._notes; }
     public void setNotes(String notes) { this._notes = notes; }
 
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "vaccineId", nullable = false)
     public Vaccine getVaccine() { return this._vaccine; }
     public void setVaccine(Vaccine vaccine) { this._vaccine = vaccine; }
 
+    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "patientId", nullable = false)
     public Patient getPatient() { return this._patient; }

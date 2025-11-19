@@ -11,12 +11,16 @@ import dev.indy.lifelink.model.request.CreatePersonRequest;
 import dev.indy.lifelink.model.request.LoginRequest;
 import dev.indy.lifelink.repository.PatientRepository;
 import dev.indy.lifelink.util.Util;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -66,9 +70,11 @@ public class AuthService {
     }
 
     public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException {
-        if(this.userWithPeselExists(body.pesel())) {
-            throw new PatientExistsException();
-        }
+        if(this.userWithPeselExists(body.pesel())) throw new PatientExistsException();
+
+        System.out.println(body.dateOfBirth());
+        System.out.println(body.dateOfBirth().matches(Util.DATE_REGEXP));
+        System.out.println(Util.parseDate(body.dateOfBirth()));
 
         final Person person = this.createPerson(body.person());
         final Person emergencyContact = this.createPerson(body.emergencyContact());

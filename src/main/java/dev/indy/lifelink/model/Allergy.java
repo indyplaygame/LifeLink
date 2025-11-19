@@ -1,6 +1,8 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 
 @Entity
 @Access(AccessType.PROPERTY)
@@ -13,6 +15,12 @@ public class Allergy {
     private Patient _patient;
 
     protected Allergy() {}
+
+    public Allergy(String name, String description, Patient patient) {
+        this._name = name;
+        this._description = description;
+        this._patient = patient;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +36,7 @@ public class Allergy {
     public String getDescription() { return this._description; }
     public void setDescription(String description) { this._description = description; }
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "patientId", nullable = false)
     public Patient getPatient() { return this._patient; }
