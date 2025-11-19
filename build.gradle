@@ -38,3 +38,9 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    archiveBaseName.set("lifelink")
+    archiveVersion.set("")
+    archiveClassifier.set("")
+}
