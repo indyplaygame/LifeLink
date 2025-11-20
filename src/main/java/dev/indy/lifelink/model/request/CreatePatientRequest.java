@@ -1,7 +1,6 @@
 package dev.indy.lifelink.model.request;
 
-import dev.indy.lifelink.util.Util;
-import dev.indy.lifelink.validation.ValidationGroups;
+import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.validation.constraints.ValidDate;
 import dev.indy.lifelink.validation.constraints.ValidPesel;
 import jakarta.validation.Valid;
@@ -13,23 +12,29 @@ import org.hibernate.validator.constraints.Length;
 import static dev.indy.lifelink.validation.ValidationGroups.*;
 
 public record CreatePatientRequest(
-    @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Date of birth cannot be empty")
-    @ValidDate(message = "Diagnosis date must be in the format DD-MM-YYYY")
+    @NotBlank(groups = OnCreate.class, message = "Date of birth cannot be empty")
+    @ValidDate(groups = OnCreate.class, message = "Diagnosis date must be in the format DD-MM-YYYY")
     String dateOfBirth,
 
-    @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Email cannot be empty")
-    @Email(message = "Invalid email format")
-    @Length(min = 5, max = 100, message = "Email must be between 5 and 100 characters")
+    @NotBlank(groups = OnCreate.class, message = "Email cannot be empty")
+    @Email(groups = OnCreate.class, message = "Invalid email format")
+    @Length(groups = OnCreate.class, min = 5, max = 100, message = "Email must be between 5 and 100 characters")
     String email,
 
-    @NotBlank(groups = ValidationGroups.OnCreate.class, message = "PESEL cannot be empty")
-    @ValidPesel
+    @NotBlank(groups = OnCreate.class, message = "PESEL cannot be empty")
+    @ValidPesel(groups = OnCreate.class)
     String pesel,
 
-    @NotBlank(groups = ValidationGroups.OnCreate.class, message = "Password cannot be empty")
-    @Pattern(regexp = "(?i)^[a-z0-9!@#$%^&*\\-_]+$", message = "Password can only contain alphanumeric characters and special characters (!@#$%^&*-_)")
-    @Length(min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+    @NotBlank(groups = OnCreate.class, message = "Password cannot be empty")
+    @Length(groups = OnCreate.class, min = 6, max = 20, message = "Password must be between 6 and 20 characters")
+    @Pattern(
+        groups = OnCreate.class,
+        regexp = "(?i)^[a-z0-9!@#$%^&*\\-_]+$",
+        message = "Password can only contain alphanumeric characters and special characters (!@#$%^&*-_)"
+    )
     String password,
+
+    Patient.BloodType bloodType,
 
     @Valid
     CreatePersonRequest person,

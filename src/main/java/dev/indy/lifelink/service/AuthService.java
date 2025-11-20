@@ -82,6 +82,7 @@ public class AuthService {
             body.email(),
             body.pesel(),
             this.hashPassword(body.password()),
+            body.bloodType(),
             person,
             emergencyContact
         );
