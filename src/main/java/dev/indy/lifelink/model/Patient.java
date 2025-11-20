@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -17,18 +18,46 @@ public class Patient {
     private String _nfcTagHash;
     private String _nfcCodeHash;
     private String _passwordHash;
+    private BloodType _bloodType;
     private Person _person;
     private Person _contactPerson;
+
+    public enum BloodType {
+        A_POSITIVE,
+        A_NEGATIVE,
+        B_POSITIVE,
+        B_NEGATIVE,
+        AB_POSITIVE,
+        AB_NEGATIVE,
+        O_POSITIVE,
+        O_NEGATIVE;
+
+        @JsonCreator
+        public BloodType fromString(String value) {
+            return switch(value.toUpperCase()) {
+                case "A+" -> A_POSITIVE;
+                case "A-" -> A_NEGATIVE;
+                case "B+" -> B_POSITIVE;
+                case "B-" -> B_NEGATIVE;
+                case "AB+" -> AB_POSITIVE;
+                case "AB-" -> AB_NEGATIVE;
+                case "O+" -> O_POSITIVE;
+                case "O-" -> O_NEGATIVE;
+                default -> throw new IllegalArgumentException("Invalid blood type: " + value);
+            };
+        }
+    }
 
     protected Patient() {}
 
     public Patient(
-        LocalDate dateOfBirth, String email, String pesel, String passwordHash, Person person, Person contactPerson
+        LocalDate dateOfBirth, String email, String pesel, String passwordHash, BloodType bloodType, Person person, Person contactPerson
     ) {
         this._dateOfBirth = dateOfBirth;
         this._email = email.toLowerCase();
         this._pesel = pesel;
         this._passwordHash = passwordHash;
+        this._bloodType = bloodType;
         this._person = person;
         this._contactPerson = contactPerson;
     }
@@ -62,6 +91,11 @@ public class Patient {
     @Column(name = "passwordHash", nullable = false, length = 255)
     public String getPasswordHash() { return this._passwordHash; }
     public void setPasswordHash(String passwordHash) { this._passwordHash = passwordHash; }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "bloodType", nullable = true, length = 3)
+    public BloodType getBloodType() { return this._bloodType; }
+    public void setBloodType(BloodType bloodType) { this._bloodType = bloodType; }
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "personId", nullable = false, unique = true)

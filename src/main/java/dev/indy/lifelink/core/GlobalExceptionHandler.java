@@ -5,6 +5,7 @@ import dev.indy.lifelink.model.response.DetailedErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -31,6 +32,16 @@ public class GlobalExceptionHandler {
             "Bad Request",
             request.getRequestURI(),
             errors
+        ), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<DetailedErrorResponse> handleHttpMessageNotReadableExceptions(HttpMessageNotReadableException e, HttpServletRequest request) {
+        return new ResponseEntity<>(new DetailedErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "Bad Request",
+            request.getRequestURI(),
+            e.getMessage()
         ), HttpStatus.BAD_REQUEST);
     }
 
