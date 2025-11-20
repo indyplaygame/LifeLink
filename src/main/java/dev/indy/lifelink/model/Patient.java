@@ -1,6 +1,7 @@
 package dev.indy.lifelink.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -33,7 +34,7 @@ public class Patient {
         O_NEGATIVE;
 
         @JsonCreator
-        public BloodType fromString(String value) {
+        public static BloodType fromString(String value) {
             return switch(value.toUpperCase()) {
                 case "A+" -> A_POSITIVE;
                 case "A-" -> A_NEGATIVE;
@@ -80,14 +81,17 @@ public class Patient {
     public String getPesel() { return this._pesel; }
     public void setPesel(String pesel) { this._pesel = pesel; }
 
+    @JsonIgnore
     @Column(name = "nfcTagHash", nullable = true, length = 255, unique = true)
     public String getNfcTagHash() { return this._nfcTagHash; }
     public void setNfcTagHash(String nfcTag) { this._nfcTagHash = nfcTag; }
 
+    @JsonIgnore
     @Column(name = "nfcCodeHash", nullable = true, length = 255, unique = true)
     public String getNfcCodeHash() { return this._nfcCodeHash; }
     public void setNfcCodeHash(String medicalInfoCode) { this._nfcCodeHash = medicalInfoCode; }
 
+    @JsonIgnore
     @Column(name = "passwordHash", nullable = false, length = 255)
     public String getPasswordHash() { return this._passwordHash; }
     public void setPasswordHash(String passwordHash) { this._passwordHash = passwordHash; }

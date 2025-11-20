@@ -7,7 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface MedicineRepository extends JpaRepository<Medicine, Long> {
     Medicine findByMedicineId(long id);
     Page<Medicine> findAllByPatient(Patient patient, Pageable pageable);
+    List<Medicine> findAllByPatient(Patient patient);
 }

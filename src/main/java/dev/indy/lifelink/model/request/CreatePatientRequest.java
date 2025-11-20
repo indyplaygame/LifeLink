@@ -6,6 +6,7 @@ import dev.indy.lifelink.validation.constraints.ValidPesel;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
 
@@ -34,6 +35,7 @@ public record CreatePatientRequest(
     )
     String password,
 
+    @NotNull(groups = OnCreate.class, message = "Blood type cannot be null")
     Patient.BloodType bloodType,
 
     @Valid
