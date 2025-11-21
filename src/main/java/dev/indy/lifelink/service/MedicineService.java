@@ -1,6 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Medicine;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddMedicineRequest;
@@ -41,15 +43,19 @@ public class MedicineService {
         return this._medicineRepository.save(medicine);
     }
 
-    public Medicine getMedicine(long id) throws EntityNotFoundException {
+    public Medicine getMedicine(HttpSession session, long id) throws EntityNotFoundException {
         Medicine medicine = this._medicineRepository.findByMedicineId(id);
         if(medicine == null) throw new EntityNotFoundException(Medicine.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(medicine.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(Medicine.class);
 
         return medicine;
     }
 
-    public Medicine updateMedicine(long id, AddMedicineRequest body) throws EntityNotFoundException {
-        Medicine medicine = this.getMedicine(id);
+    public Medicine updateMedicine(HttpSession session, long id, AddMedicineRequest body) throws EntityNotFoundException {
+        Medicine medicine = this.getMedicine(session, id);
 
         if(body.name() != null) medicine.setMedicineName(body.name());
         if(body.notes() != null) medicine.setNotes(body.notes());
@@ -61,8 +67,8 @@ public class MedicineService {
         return this._medicineRepository.save(medicine);
     }
 
-    public void deleteMedicine(long id) throws EntityNotFoundException {
-        Medicine medicine = this.getMedicine(id);
+    public void deleteMedicine(HttpSession session, long id) throws EntityNotFoundException {
+        Medicine medicine = this.getMedicine(session, id);
         this._medicineRepository.delete(medicine);
     }
 

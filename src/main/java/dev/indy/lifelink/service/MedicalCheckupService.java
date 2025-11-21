@@ -1,10 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
-import dev.indy.lifelink.model.MedicalCheckup;
-import dev.indy.lifelink.model.Patient;
-import dev.indy.lifelink.model.Vaccination;
-import dev.indy.lifelink.model.Vaccine;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.*;
 import dev.indy.lifelink.model.request.AddMedicalCheckupRequest;
 import dev.indy.lifelink.model.request.AddVaccinationRequest;
 import dev.indy.lifelink.repository.MedicalCheckupRepository;
@@ -41,15 +39,19 @@ public class MedicalCheckupService {
         return this._medicalCheckupRepository.save(checkup);
     }
 
-    public MedicalCheckup getMedicalCheckup(long id) throws EntityNotFoundException {
+    public MedicalCheckup getMedicalCheckup(HttpSession session, long id) throws EntityNotFoundException {
         MedicalCheckup checkup = this._medicalCheckupRepository.findByCheckupId(id);
         if(checkup == null) throw new EntityNotFoundException(MedicalCheckup.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(checkup.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(MedicalCheckup.class);
 
         return checkup;
     }
 
-    public MedicalCheckup updateMedicalCheckup(long id, AddMedicalCheckupRequest body) throws EntityNotFoundException {
-        MedicalCheckup checkup = this.getMedicalCheckup(id);
+    public MedicalCheckup updateMedicalCheckup(HttpSession session, long id, AddMedicalCheckupRequest body) throws EntityNotFoundException {
+        MedicalCheckup checkup = this.getMedicalCheckup(session, id);
 
         if(body.details() != null) checkup.setCheckupDetails(body.details());
         if(body.date() != null) checkup.setCheckupDate(Util.parseDate(body.date()));
@@ -57,8 +59,8 @@ public class MedicalCheckupService {
         return this._medicalCheckupRepository.save(checkup);
     }
 
-    public void deleteMedicalCheckup(long id) throws EntityNotFoundException {
-        MedicalCheckup checkup = this.getMedicalCheckup(id);
+    public void deleteMedicalCheckup(HttpSession session, long id) throws EntityNotFoundException {
+        MedicalCheckup checkup = this.getMedicalCheckup(session, id);
         this._medicalCheckupRepository.delete(checkup);
     }
 

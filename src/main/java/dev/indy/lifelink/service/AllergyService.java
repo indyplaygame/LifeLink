@@ -1,6 +1,7 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
 import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddAllergyRequest;
@@ -36,16 +37,20 @@ public class AllergyService {
         return this._allergyRepository.save(allergy);
     }
 
-    public Allergy getAllergy(long id) throws EntityNotFoundException {
+    public Allergy getAllergy(HttpSession session, long id) throws EntityNotFoundException {
         Allergy allergy = this._allergyRepository.findByAllergyId(id);
         if(allergy == null)
             throw new EntityNotFoundException(Allergy.class, id);
 
+        Patient patient = this._authService.getActivePatient(session);
+        if(allergy.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(Allergy.class);
+
         return allergy;
     }
 
-    public Allergy updateAllergy(long id, AddAllergyRequest body) throws EntityNotFoundException {
-        Allergy allergy = this.getAllergy(id);
+    public Allergy updateAllergy(HttpSession session, long id, AddAllergyRequest body) throws EntityNotFoundException {
+        Allergy allergy = this.getAllergy(session, id);
 
         if(body.name() != null) allergy.setName(body.name());
         if(body.description() != null) allergy.setDescription(body.description());
@@ -53,8 +58,8 @@ public class AllergyService {
         return this._allergyRepository.save(allergy);
     }
 
-    public void deleteAllergy(long id) throws EntityNotFoundException {
-        Allergy allergy = this.getAllergy(id);
+    public void deleteAllergy(HttpSession session, long id) throws EntityNotFoundException {
+        Allergy allergy = this.getAllergy(session, id);
         this._allergyRepository.delete(allergy);
     }
 

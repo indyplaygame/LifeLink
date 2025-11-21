@@ -1,6 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.Vaccination;
 import dev.indy.lifelink.model.Vaccine;
@@ -31,7 +33,7 @@ public class VaccinationService {
 
     public Vaccination addVaccination(HttpSession session, AddVaccinationRequest body) throws EntityNotFoundException {
         Patient patient = this._authService.getActivePatient(session);
-        Vaccine vaccine = this._vaccineService.getVaccine(body.vaccineId());
+        Vaccine vaccine = this._vaccineService.getVaccine(session, body.vaccineId());
 
         Vaccination vaccination = new Vaccination(
             body.doseNumber(),
@@ -44,29 +46,33 @@ public class VaccinationService {
         return this._vaccinationRepository.save(vaccination);
     }
 
-    public Vaccination getVaccination(long id) throws EntityNotFoundException {
+    public Vaccination getVaccination(HttpSession session, long id) throws EntityNotFoundException {
         Vaccination vaccination = this._vaccinationRepository.findByVaccinationId(id);
         if(vaccination == null) throw new EntityNotFoundException(Vaccination.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(vaccination.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(Vaccination.class);
 
         return vaccination;
     }
 
-    public Vaccination updateVaccination(long id, AddVaccinationRequest body) throws EntityNotFoundException {
-        Vaccination vaccination = this.getVaccination(id);
+    public Vaccination updateVaccination(HttpSession session, long id, AddVaccinationRequest body) throws EntityNotFoundException {
+        Vaccination vaccination = this.getVaccination(session, id);
 
         if(body.doseNumber() != null) vaccination.setDoseNumber(body.doseNumber());
         if(body.vaccinationDate() != null) vaccination.setVaccinationDate(Util.parseDate(body.vaccinationDate()));
         if(body.notes() != null) vaccination.setNotes(body.notes());
         if(body.vaccineId() != null) {
-            Vaccine vaccine = this._vaccineService.getVaccine(body.vaccineId());
+            Vaccine vaccine = this._vaccineService.getVaccine(session, body.vaccineId());
             vaccination.setVaccine(vaccine);
         }
 
         return this._vaccinationRepository.save(vaccination);
     }
 
-    public void deleteVaccination(long id) throws EntityNotFoundException {
-        Vaccination vaccination = this.getVaccination(id);
+    public void deleteVaccination(HttpSession session, long id) throws EntityNotFoundException {
+        Vaccination vaccination = this.getVaccination(session, id);
         this._vaccinationRepository.delete(vaccination);
     }
 

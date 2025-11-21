@@ -32,7 +32,7 @@ public class MedicineController {
     @AuthRequired
     @PostMapping(value = "/add")
     public ResponseEntity<Medicine> add(
-            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicineRequest body, HttpSession session
+        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicineRequest body, HttpSession session
     ) {
         Medicine medicine = this._medicineService.addMedicine(session, body);
         return ResponseEntity.status(HttpStatus.CREATED).body(medicine);
@@ -40,9 +40,9 @@ public class MedicineController {
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<Medicine> get(@PathVariable Long id) {
+    public ResponseEntity<Medicine> get(@PathVariable Long id, HttpSession session) {
         try {
-            Medicine medicine = this._medicineService.getMedicine(id);
+            Medicine medicine = this._medicineService.getMedicine(session, id);
             return ResponseEntity.ok(medicine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -52,11 +52,12 @@ public class MedicineController {
     @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Medicine> update(
-            @PathVariable Long id,
-            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicineRequest body
+        @PathVariable Long id,
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicineRequest body,
+        HttpSession session
     ) {
         try {
-            Medicine medicine = this._medicineService.updateMedicine(id, body);
+            Medicine medicine = this._medicineService.updateMedicine(session, id, body);
             return ResponseEntity.ok(medicine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -65,9 +66,9 @@ public class MedicineController {
 
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         try {
-            this._medicineService.deleteMedicine(id);
+            this._medicineService.deleteMedicine(session, id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());

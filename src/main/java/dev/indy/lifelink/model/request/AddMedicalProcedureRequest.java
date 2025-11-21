@@ -15,9 +15,9 @@ public record AddMedicalProcedureRequest(
 
     @NotBlank(groups = OnCreate.class, message = "Procedure description cannot be empty")
     @Length(groups = {OnCreate.class, OnUpdate.class}, max = 1000, message = "Procedure description cannot exceed 1000 characters")
-    String procedureDescription,
+    String description,
 
     @NotBlank(groups = OnCreate.class, message = "Procedure date cannot be empty")
     @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Diagnosis date must be in the format DD-MM-YYYY")
-    String procedureDate
+    String date
 ) {}

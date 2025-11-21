@@ -14,7 +14,7 @@ import static dev.indy.lifelink.validation.ValidationGroups.*;
 
 public record CreatePatientRequest(
     @NotBlank(groups = OnCreate.class, message = "Date of birth cannot be empty")
-    @ValidDate(groups = OnCreate.class, message = "Diagnosis date must be in the format DD-MM-YYYY")
+    @ValidDate(groups = OnCreate.class, message = "Date of birth must be in the format DD-MM-YYYY")
     String dateOfBirth,
 
     @NotBlank(groups = OnCreate.class, message = "Email cannot be empty")

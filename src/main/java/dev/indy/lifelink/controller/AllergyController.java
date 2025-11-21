@@ -10,7 +10,6 @@ import dev.indy.lifelink.model.response.PageResponse;
 import dev.indy.lifelink.service.AllergyService;
 import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -39,9 +38,9 @@ public class AllergyController {
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<Allergy> get(@PathVariable Long id) {
+    public ResponseEntity<Allergy> get(@PathVariable Long id, HttpSession session) {
         try {
-            Allergy allergy = this._allergyService.getAllergy(id);
+            Allergy allergy = this._allergyService.getAllergy(session, id);
             return ResponseEntity.ok(allergy);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -52,10 +51,11 @@ public class AllergyController {
     @PutMapping("/{id}/update")
     public ResponseEntity<Allergy> update(
         @PathVariable Long id,
-        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddAllergyRequest body
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddAllergyRequest body,
+        HttpSession session
     ) {
         try {
-            Allergy allergy = this._allergyService.updateAllergy(id, body);
+            Allergy allergy = this._allergyService.updateAllergy(session, id, body);
             return ResponseEntity.ok(allergy);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -64,9 +64,9 @@ public class AllergyController {
 
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(HttpSession session, @PathVariable Long id) {
         try {
-            this._allergyService.deleteAllergy(id);
+            this._allergyService.deleteAllergy(session, id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());

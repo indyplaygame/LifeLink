@@ -10,7 +10,6 @@ import dev.indy.lifelink.model.response.PageResponse;
 import dev.indy.lifelink.service.MedicalProcedureService;
 import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -31,7 +30,7 @@ public class MedicalProcedureController {
     @AuthRequired
     @PostMapping(value = "/add")
     public ResponseEntity<MedicalProcedure> add(
-            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicalProcedureRequest body, HttpSession session
+        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicalProcedureRequest body, HttpSession session
     ) {
         MedicalProcedure procedure = this._medicalProcedureService.addMedicalProcedure(session, body);
         return ResponseEntity.status(HttpStatus.CREATED).body(procedure);
@@ -39,9 +38,9 @@ public class MedicalProcedureController {
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalProcedure> get(@PathVariable Long id) {
+    public ResponseEntity<MedicalProcedure> get(@PathVariable Long id, HttpSession session) {
         try {
-            MedicalProcedure procedure = this._medicalProcedureService.getMedicalProcedure(id);
+            MedicalProcedure procedure = this._medicalProcedureService.getMedicalProcedure(session, id);
             return ResponseEntity.ok(procedure);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -51,11 +50,12 @@ public class MedicalProcedureController {
     @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<MedicalProcedure> update(
-            @PathVariable Long id,
-            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicalProcedureRequest body
+        @PathVariable Long id,
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicalProcedureRequest body,
+        HttpSession session
     ) {
         try {
-            MedicalProcedure procedure = this._medicalProcedureService.updateMedicalProcedure(id, body);
+            MedicalProcedure procedure = this._medicalProcedureService.updateMedicalProcedure(session, id, body);
             return ResponseEntity.ok(procedure);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -64,9 +64,9 @@ public class MedicalProcedureController {
 
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         try {
-            this._medicalProcedureService.deleteMedicalProcedure(id);
+            this._medicalProcedureService.deleteMedicalProcedure(session, id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());

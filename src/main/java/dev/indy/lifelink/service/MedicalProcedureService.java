@@ -1,6 +1,7 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
 import dev.indy.lifelink.model.MedicalProcedure;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddMedicalProcedureRequest;
@@ -30,33 +31,37 @@ public class MedicalProcedureService {
 
         MedicalProcedure procedure = new MedicalProcedure(
             body.cptCode(),
-            body.procedureDescription(),
-            Util.parseDate(body.procedureDate()),
+            body.description(),
+            Util.parseDate(body.date()),
             patient
         );
 
         return this._medicalProcedureRepository.save(procedure);
     }
 
-    public MedicalProcedure getMedicalProcedure(long id) throws EntityNotFoundException {
+    public MedicalProcedure getMedicalProcedure(HttpSession session, long id) throws EntityNotFoundException {
         MedicalProcedure procedure = this._medicalProcedureRepository.findByProcedureId(id);
         if(procedure == null) throw new EntityNotFoundException(MedicalProcedure.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(procedure.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(MedicalProcedure.class);
 
         return procedure;
     }
 
-    public MedicalProcedure updateMedicalProcedure(long id, AddMedicalProcedureRequest body) throws EntityNotFoundException {
-        MedicalProcedure procedure = this.getMedicalProcedure(id);
+    public MedicalProcedure updateMedicalProcedure(HttpSession session, long id, AddMedicalProcedureRequest body) throws EntityNotFoundException {
+        MedicalProcedure procedure = this.getMedicalProcedure(session, id);
 
         if(body.cptCode() != null) procedure.setCptCode(body.cptCode());
-        if(body.procedureDescription() != null) procedure.setProcedureDescription(body.procedureDescription());
-        if(body.procedureDate() != null) procedure.setProcedureDate(Util.parseDate(body.procedureDate()));
+        if(body.description() != null) procedure.setProcedureDescription(body.description());
+        if(body.date() != null) procedure.setProcedureDate(Util.parseDate(body.date()));
 
         return this._medicalProcedureRepository.save(procedure);
     }
 
-    public void deleteMedicalProcedure(long id) throws EntityNotFoundException {
-        MedicalProcedure procedure = this.getMedicalProcedure(id);
+    public void deleteMedicalProcedure(HttpSession session, long id) throws EntityNotFoundException {
+        MedicalProcedure procedure = this.getMedicalProcedure(session, id);
         this._medicalProcedureRepository.delete(procedure);
     }
 
