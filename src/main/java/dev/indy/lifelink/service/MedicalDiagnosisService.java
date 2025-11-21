@@ -34,6 +34,7 @@ public class MedicalDiagnosisService {
         MedicalDiagnosis diagnosis = new MedicalDiagnosis(
             body.icdCode(),
             body.description(),
+            Util.parseDate(body.date()),
             patient
         );
 

@@ -2,6 +2,7 @@ package dev.indy.lifelink.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -44,7 +45,21 @@ public class Patient {
                 case "AB-" -> AB_NEGATIVE;
                 case "O+" -> O_POSITIVE;
                 case "O-" -> O_NEGATIVE;
-                default -> throw new IllegalArgumentException("Invalid blood type: " + value);
+                default -> BloodType.valueOf(value);
+            };
+        }
+
+        @JsonValue
+        public static String toString(BloodType value) {
+            return switch(value) {
+                case A_POSITIVE -> "A+";
+                case A_NEGATIVE -> "A-";
+                case B_POSITIVE -> "B+";
+                case B_NEGATIVE -> "B-";
+                case AB_POSITIVE -> "AB+";
+                case AB_NEGATIVE -> "AB-";
+                case O_POSITIVE -> "O+";
+                case O_NEGATIVE -> "O-";
             };
         }
     }
@@ -97,7 +112,7 @@ public class Patient {
     public void setPasswordHash(String passwordHash) { this._passwordHash = passwordHash; }
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "bloodType", nullable = true, length = 3)
+    @Column(name = "bloodType", nullable = false, length = 3)
     public BloodType getBloodType() { return this._bloodType; }
     public void setBloodType(BloodType bloodType) { this._bloodType = bloodType; }
 
