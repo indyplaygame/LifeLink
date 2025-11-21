@@ -38,17 +38,20 @@ public class PatientService {
         this._vaccinationService = vaccinationService;
     }
 
-    public Map<String, List<?>> getPatientCard(String nfcUid) {
+    public Map<String, ?> getPatientCard(String nfcUid) {
         Patient patient = this._authService.getPatientByNfcTag(nfcUid);
 
         return Map.of(
-            "allergies", this._allergyService.listPatientAllergies(patient),
-            "chronicDiseases", this._chronicDiseaseService.listPatientChronicDiseases(patient),
-            "medicalCheckups", this._medicalCheckupService.listPatientMedicalCheckups(patient),
-            "medicalDiagnoses", this._medicalDiagnosisService.listPatientMedicalDiagnoses(patient),
-            "medicalProcedures", this._medicalProcedureService.listPatientMedicalProcedures(patient),
-            "medicines", this._medicineService.listPatientMedicines(patient),
-            "vaccinations", this._vaccinationService.listPatientVaccinations(patient)
+            "patient", patient,
+            "card", Map.of(
+                "allergies", this._allergyService.listPatientAllergies(patient),
+                "chronicDiseases", this._chronicDiseaseService.listPatientChronicDiseases(patient),
+                "medicalCheckups", this._medicalCheckupService.listPatientMedicalCheckups(patient),
+                "medicalDiagnoses", this._medicalDiagnosisService.listPatientMedicalDiagnoses(patient),
+                "medicalProcedures", this._medicalProcedureService.listPatientMedicalProcedures(patient),
+                "medicines", this._medicineService.listPatientMedicines(patient),
+                "vaccinations", this._vaccinationService.listPatientVaccinations(patient)
+            )
         );
     }
 }

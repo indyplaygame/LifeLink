@@ -29,12 +29,12 @@ public class PatientController {
     @Validated
     @AuthRequired(AuthMethod.TOKEN)
     @GetMapping("/card/{nfcUid}")
-    public ResponseEntity<Map<String, List<?>>> getPatientCard(
+    public ResponseEntity<Map<String, ?>> getPatientCard(
         @PathVariable
         @Pattern(regexp = Util.NFC_UID_REGEXP, message = "NFC tag UID must be a valid hexadecimal string (with optional colons or hyphens).")
         String nfcUid
     ) {
-        Map<String, List<?>> patientCard = this._patientService.getPatientCard(nfcUid);
+        Map<String, ?> patientCard = this._patientService.getPatientCard(nfcUid);
         return ResponseEntity.ok(patientCard);
     }
 }
