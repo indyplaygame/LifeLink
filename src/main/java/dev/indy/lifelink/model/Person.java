@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import dev.indy.lifelink.util.Util;
 import jakarta.persistence.*;
 

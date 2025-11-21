@@ -14,6 +14,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class VaccinationService {
     private final VaccinationRepository _vaccinationRepository;
@@ -71,5 +73,9 @@ public class VaccinationService {
     public Page<Vaccination> listPatientVaccinations(HttpSession session, Pageable pageable) {
         Patient patient = this._authService.getActivePatient(session);
         return this._vaccinationRepository.findAllByPatient(patient, pageable);
+    }
+
+    public List<Vaccination> listPatientVaccinations(Patient patient) {
+        return this._vaccinationRepository.findAllByPatient(patient);
     }
 }

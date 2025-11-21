@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AllergyService {
     private final AllergyRepository _allergyRepository;
@@ -59,5 +61,9 @@ public class AllergyService {
     public Page<Allergy> listPatientAllergies(HttpSession session, Pageable pageable) {
         Patient patient = this._authService.getActivePatient(session);
         return this._allergyRepository.findAllByPatient(patient, pageable);
+    }
+
+    public List<Allergy> listPatientAllergies(Patient patient) {
+        return this._allergyRepository.findAllByPatient(patient);
     }
 }

@@ -1,11 +1,13 @@
 package dev.indy.lifelink.auth;
 
+import dev.indy.lifelink.exception.AuthorizationException;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -31,10 +33,18 @@ public class AuthInterceptor implements HandlerInterceptor {
                 case SESSION:
                     HttpSession session = request.getSession(false);
                     if(!this._authService.isAuthenticated(session))
-                        throw new HttpException(HttpStatus.UNAUTHORIZED, "This endpoint requires authentication.");
+                        throw new AuthorizationException();
 
                     break;
                 case TOKEN:
+                    String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+                    if(authHeader == null || !authHeader.startsWith("Bearer "))
+                        throw new AuthorizationException();
+
+                    String token = authHeader.substring(7);
+                    if(!this._authService.isTokenValid(token))
+                        throw new AuthorizationException();
+
                     break;
             }
         }

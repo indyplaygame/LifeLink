@@ -8,9 +8,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface VaccinationRepository extends JpaRepository<Vaccination, Long> {
     Vaccination findByVaccinationId(long id);
     Page<Vaccination> findAllByPatient(Patient patient, Pageable pageable);
+    List<Vaccination> findAllByPatient(Patient patient);
 
     @Query("SELECT COUNT(v) > 0 FROM Vaccination v WHERE v.vaccine = :vaccine")
     boolean existsByVaccine(Vaccine vaccine);

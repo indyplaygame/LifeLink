@@ -1,44 +1,62 @@
 package dev.indy.lifelink.service;
 
-import dev.indy.lifelink.exception.InvalidLoginCredentialsException;
+import dev.indy.lifelink.exception.HttpException;
+import dev.indy.lifelink.exception.InvalidAuthenticationCredentialsException;
 import dev.indy.lifelink.exception.PatientExistsException;
 import dev.indy.lifelink.exception.SessionActiveException;
 import dev.indy.lifelink.model.Address;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.Person;
-import dev.indy.lifelink.model.request.CreateAddressRequest;
-import dev.indy.lifelink.model.request.CreatePatientRequest;
-import dev.indy.lifelink.model.request.CreatePersonRequest;
-import dev.indy.lifelink.model.request.LoginRequest;
+import dev.indy.lifelink.model.request.*;
 import dev.indy.lifelink.repository.PatientRepository;
 import dev.indy.lifelink.util.Util;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
-import java.time.LocalDate;
+
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
 @Service
 public class AuthService {
     private final static String ACTIVE_PATIENT_SESSION_KEY = "activeUser";
+    private final static long JWT_EXPIRATION_MS = 1800000L;
 
     private final PatientRepository _patientRepository;
     private final BCryptPasswordEncoder _passwordEncoder;
+    private final MessageDigest _digest;
+    private final Base64.Encoder _encoder;
+    private final SecretKey _key;
 
     @Autowired
-    public AuthService(PatientRepository patientRepository) {
+    public AuthService(PatientRepository patientRepository, @Value("${jwt.secret}") String secret) throws NoSuchAlgorithmException {
         this._patientRepository = patientRepository;
         this._passwordEncoder = new BCryptPasswordEncoder();
+        this._digest = MessageDigest.getInstance("SHA-256");
+        this._encoder = Base64.getEncoder();
+        this._key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     private String hashPassword(String password) {
         return password != null ? this._passwordEncoder.encode(password) : null;
+    }
+
+    private String hash(String str) {
+        byte[] encoded = this._digest.digest(str.getBytes(StandardCharsets.UTF_8));
+        return this._encoder.encodeToString(encoded);
     }
 
     private boolean verifyPassword(String password, String hash) {
@@ -47,6 +65,28 @@ public class AuthService {
     
     private boolean userWithPeselExists(String pesel) {
         return this._patientRepository.findByPesel(pesel) != null;
+    }
+
+    private String generateJwtToken(String nfcTagId) {
+        return Jwts.builder()
+            .setSubject(nfcTagId)
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + JWT_EXPIRATION_MS))
+            .signWith(this._key, SignatureAlgorithm.HS256)
+            .compact();
+    }
+
+    private Claims parseJwtToken(String token) {
+        return Jwts.parserBuilder()
+            .setSigningKey(this._key)
+            .build()
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    private boolean checkJwtTokenExpiration(Claims claims) {
+        final Date expiration = claims.getExpiration();
+        return expiration != null && expiration.after(new Date());
     }
 
     private Person createPerson(CreatePersonRequest personBody) {
@@ -70,7 +110,7 @@ public class AuthService {
         );
     }
 
-    public Patient createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
+    public void createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
         if(this.isAuthenticated(session)) throw new SessionActiveException();
         if(this.userWithPeselExists(body.pesel())) throw new PatientExistsException();
 
@@ -88,18 +128,17 @@ public class AuthService {
         );
 
         this.setActivePatient(session, patient);
-        return this._patientRepository.save(patient);
+        this._patientRepository.save(patient);
     }
 
-    public Patient authenticate(HttpSession session, LoginRequest body) throws InvalidLoginCredentialsException, SessionActiveException {
+    public void authenticate(HttpSession session, LoginRequest body) throws InvalidAuthenticationCredentialsException, SessionActiveException {
         if(this.isAuthenticated(session)) throw new SessionActiveException();
 
         final Patient patient = this._patientRepository.findByPesel(body.pesel());
         if(patient == null || !this.verifyPassword(body.password(), patient.getPasswordHash()))
-            throw new InvalidLoginCredentialsException();
+            throw new InvalidAuthenticationCredentialsException();
 
         this.setActivePatient(session, patient);
-        return patient;
     }
 
     public void logout(HttpSession session) {
@@ -108,6 +147,49 @@ public class AuthService {
 
     public boolean isAuthenticated(HttpSession session) {
         return this.getActivePatient(session) != null;
+    }
+
+    public String generateToken(NfcTagRequest body) throws InvalidAuthenticationCredentialsException {
+        final Patient patient = this.getPatientByNfcTag(body.nfcTagUid());
+        if(patient == null)
+            throw new HttpException(HttpStatus.NOT_FOUND, "No patient found for the provided NFC tag.");
+
+        final String nfcCodeHash = patient.getNfcCodeHash();
+        if(!this.verifyPassword(body.nfcCode(), nfcCodeHash))
+            throw new InvalidAuthenticationCredentialsException();
+
+        return this.generateJwtToken(body.nfcTagUid());
+    }
+
+    public boolean isTokenValid(String token) {
+        try {
+            final Claims claims = this.parseJwtToken(token);
+            return this.checkJwtTokenExpiration(claims);
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
+    public void registerNfcTag(HttpSession session, NfcTagRequest body) {
+        final Patient patient = this.getActivePatient(session);
+
+        patient.setNfcTagHash(this.hash(body.nfcTagUid()));
+        patient.setNfcCodeHash(this.hashPassword(body.nfcCode()));
+
+        this._patientRepository.save(patient);
+    }
+
+    public void deregisterNfcTag(HttpSession session) {
+        final Patient patient = this.getActivePatient(session);
+
+        patient.setNfcTagHash(null);
+        patient.setNfcCodeHash(null);
+
+        this._patientRepository.save(patient);
+    }
+
+    public Patient getPatientByNfcTag(String nfcUid) {
+        return this._patientRepository.findByNfcTagHash(this.hash(nfcUid));
     }
 
     public Patient getActivePatient(HttpSession session) {
