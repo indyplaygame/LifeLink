@@ -1,5 +1,6 @@
 package dev.indy.lifelink.model.request;
 
+import dev.indy.lifelink.validation.constraints.ValidDate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;
@@ -14,5 +15,9 @@ public record AddMedicalDiagnosisRequest(
 
     @NotBlank(groups = OnCreate.class, message = "Description cannot be empty")
     @Length(groups = {OnCreate.class, OnUpdate.class}, max = 1000, message = "Description cannot exceed 1000 characters")
-    String description
+    String description,
+
+    @NotBlank(groups = OnCreate.class, message = "Diagnosis date cannot be empty")
+    @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Diagnosis date must be in the format DD-MM-YYYY")
+    String date
 ) {}

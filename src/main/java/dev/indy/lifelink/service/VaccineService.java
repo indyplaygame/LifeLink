@@ -2,6 +2,8 @@ package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityHasRelatedDataException;
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.Vaccination;
 import dev.indy.lifelink.model.Vaccine;
@@ -34,23 +36,27 @@ public class VaccineService {
         return this._vaccineRepository.save(vaccine);
     }
 
-    public Vaccine getVaccine(long id) throws EntityNotFoundException {
+    public Vaccine getVaccine(HttpSession session, long id) throws EntityNotFoundException {
         Vaccine vaccine = this._vaccineRepository.findByVaccineId(id);
         if(vaccine == null) throw new EntityNotFoundException(Vaccine.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(vaccine.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(Vaccine.class);
 
         return vaccine;
     }
 
-    public Vaccine updateVaccine(long id, AddVaccineRequest body) throws EntityNotFoundException {
-        Vaccine vaccine = this.getVaccine(id);
+    public Vaccine updateVaccine(HttpSession session, long id, AddVaccineRequest body) throws EntityNotFoundException {
+        Vaccine vaccine = this.getVaccine(session, id);
 
         if(body.name() != null) vaccine.setName(body.name());
 
         return this._vaccineRepository.save(vaccine);
     }
 
-    public void deleteVaccine(long id) throws EntityNotFoundException, EntityHasRelatedDataException {
-        Vaccine vaccine = this.getVaccine(id);
+    public void deleteVaccine(HttpSession session, long id) throws EntityNotFoundException, EntityHasRelatedDataException {
+        Vaccine vaccine = this.getVaccine(session, id);
         if(this._vaccinationRepository.existsByVaccine(vaccine))
             throw new EntityHasRelatedDataException(Vaccine.class, Vaccination.class);
 

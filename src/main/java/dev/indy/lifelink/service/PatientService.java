@@ -2,6 +2,7 @@ package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.response.PageResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -38,17 +39,30 @@ public class PatientService {
         this._vaccinationService = vaccinationService;
     }
 
-    public Map<String, List<?>> getPatientCard(String nfcUid) {
+    public Map<String, ?> getPatientCard(String nfcUid) {
         Patient patient = this._authService.getPatientByNfcTag(nfcUid);
 
+        return this.getPatientCard(patient);
+    }
+
+    public Map<String, ?> getPatientCard(HttpSession session) {
+        Patient patient = this._authService.getActivePatient(session);
+
+        return this.getPatientCard(patient);
+    }
+
+    public Map<String, ?> getPatientCard(Patient patient) {
         return Map.of(
-            "allergies", this._allergyService.listPatientAllergies(patient),
-            "chronicDiseases", this._chronicDiseaseService.listPatientChronicDiseases(patient),
-            "medicalCheckups", this._medicalCheckupService.listPatientMedicalCheckups(patient),
-            "medicalDiagnoses", this._medicalDiagnosisService.listPatientMedicalDiagnoses(patient),
-            "medicalProcedures", this._medicalProcedureService.listPatientMedicalProcedures(patient),
-            "medicines", this._medicineService.listPatientMedicines(patient),
-            "vaccinations", this._vaccinationService.listPatientVaccinations(patient)
+            "patient", patient,
+            "card", Map.of(
+                "allergies", this._allergyService.listPatientAllergies(patient),
+                "chronicDiseases", this._chronicDiseaseService.listPatientChronicDiseases(patient),
+                "medicalCheckups", this._medicalCheckupService.listPatientMedicalCheckups(patient),
+                "medicalDiagnoses", this._medicalDiagnosisService.listPatientMedicalDiagnoses(patient),
+                "medicalProcedures", this._medicalProcedureService.listPatientMedicalProcedures(patient),
+                "medicines", this._medicineService.listPatientMedicines(patient),
+                "vaccinations", this._vaccinationService.listPatientVaccinations(patient)
+            )
         );
     }
 }

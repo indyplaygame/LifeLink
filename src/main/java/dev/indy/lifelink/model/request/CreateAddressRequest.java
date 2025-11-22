@@ -1,7 +1,6 @@
 package dev.indy.lifelink.model.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.Length;

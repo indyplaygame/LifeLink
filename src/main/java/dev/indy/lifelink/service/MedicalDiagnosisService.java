@@ -1,6 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.MedicalCheckup;
 import dev.indy.lifelink.model.MedicalDiagnosis;
 import dev.indy.lifelink.model.Patient;
@@ -34,21 +36,26 @@ public class MedicalDiagnosisService {
         MedicalDiagnosis diagnosis = new MedicalDiagnosis(
             body.icdCode(),
             body.description(),
+            Util.parseDate(body.date()),
             patient
         );
 
         return this._medicalDiagnosisRepository.save(diagnosis);
     }
 
-    public MedicalDiagnosis getMedicalDiagnosis(long id) throws EntityNotFoundException {
+    public MedicalDiagnosis getMedicalDiagnosis(HttpSession session, long id) throws EntityNotFoundException {
         MedicalDiagnosis diagnosis = this._medicalDiagnosisRepository.findByDiagnosisId(id);
         if(diagnosis == null) throw new EntityNotFoundException(MedicalDiagnosis.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(diagnosis.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(MedicalDiagnosis.class);
 
         return diagnosis;
     }
 
-    public MedicalDiagnosis updateMedicalDiagnosis(long id, AddMedicalDiagnosisRequest body) throws EntityNotFoundException {
-        MedicalDiagnosis diagnosis = this.getMedicalDiagnosis(id);
+    public MedicalDiagnosis updateMedicalDiagnosis(HttpSession session, long id, AddMedicalDiagnosisRequest body) throws EntityNotFoundException {
+        MedicalDiagnosis diagnosis = this.getMedicalDiagnosis(session, id);
 
         if(body.icdCode() != null) diagnosis.setIcdCode(body.icdCode());
         if(body.description() != null) diagnosis.setDescription(body.description());
@@ -56,8 +63,8 @@ public class MedicalDiagnosisService {
         return this._medicalDiagnosisRepository.save(diagnosis);
     }
 
-    public void deleteMedicalDiagnosis(long id) throws EntityNotFoundException {
-        MedicalDiagnosis diagnosis = this.getMedicalDiagnosis(id);
+    public void deleteMedicalDiagnosis(HttpSession session, long id) throws EntityNotFoundException {
+        MedicalDiagnosis diagnosis = this.getMedicalDiagnosis(session, id);
         this._medicalDiagnosisRepository.delete(diagnosis);
     }
 

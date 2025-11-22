@@ -34,7 +34,7 @@ public class MedicalDiagnosisController {
     @AuthRequired
     @PostMapping(value = "/add")
     public ResponseEntity<MedicalDiagnosis> add(
-            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicalDiagnosisRequest body, HttpSession session
+        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddMedicalDiagnosisRequest body, HttpSession session
     ) {
         MedicalDiagnosis diagnosis = this._medicalDiagnosisService.addMedicalDiagnosis(session, body);
         return ResponseEntity.status(HttpStatus.CREATED).body(diagnosis);
@@ -42,9 +42,9 @@ public class MedicalDiagnosisController {
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<MedicalDiagnosis> get(@PathVariable Long id) {
+    public ResponseEntity<MedicalDiagnosis> get(@PathVariable Long id, HttpSession session) {
         try {
-            MedicalDiagnosis diagnosis = this._medicalDiagnosisService.getMedicalDiagnosis(id);
+            MedicalDiagnosis diagnosis = this._medicalDiagnosisService.getMedicalDiagnosis(session, id);
             return ResponseEntity.ok(diagnosis);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -54,11 +54,12 @@ public class MedicalDiagnosisController {
     @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<MedicalDiagnosis> update(
-            @PathVariable Long id,
-            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicalDiagnosisRequest body
+        @PathVariable Long id,
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddMedicalDiagnosisRequest body,
+        HttpSession session
     ) {
         try {
-            MedicalDiagnosis diagnosis = this._medicalDiagnosisService.updateMedicalDiagnosis(id, body);
+            MedicalDiagnosis diagnosis = this._medicalDiagnosisService.updateMedicalDiagnosis(session, id, body);
             return ResponseEntity.ok(diagnosis);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -67,9 +68,9 @@ public class MedicalDiagnosisController {
 
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         try {
-            this._medicalDiagnosisService.deleteMedicalDiagnosis(id);
+            this._medicalDiagnosisService.deleteMedicalDiagnosis(session, id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());

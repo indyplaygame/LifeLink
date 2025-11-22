@@ -38,7 +38,7 @@ public class AuthController {
         try {
             this._authService.createPatient(session, body);
 
-            return ResponseEntity.ok(new MessageResponse("Patient registered successfully."));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new MessageResponse("Patient registered successfully."));
         } catch(PatientExistsException | SessionActiveException e) {
             throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
@@ -85,7 +85,7 @@ public class AuthController {
     }
 
     @AuthRequired
-    @PostMapping("/nfc/register")
+    @PatchMapping("/nfc/register")
     public ResponseEntity<MessageResponse> registerNfcTag(
         @Validated @RequestBody NfcTagRequest body,
         HttpSession session
@@ -95,7 +95,7 @@ public class AuthController {
     }
 
     @AuthRequired
-    @PostMapping("/nfc/deregister")
+    @PatchMapping("/nfc/deregister")
     public ResponseEntity<MessageResponse> deregisterNfcTag(HttpSession session) {
         this._authService.deregisterNfcTag(session);
         return ResponseEntity.ok(new MessageResponse("NFC tag deregistered successfully."));

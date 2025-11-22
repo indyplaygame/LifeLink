@@ -182,6 +182,9 @@ public class AuthService {
     public void deregisterNfcTag(HttpSession session) {
         final Patient patient = this.getActivePatient(session);
 
+        if(patient.getNfcTagHash() == null || patient.getNfcCodeHash() == null)
+            throw new HttpException(HttpStatus.NOT_FOUND, "No NFC tag is registered for the active patient.");
+
         patient.setNfcTagHash(null);
         patient.setNfcCodeHash(null);
 

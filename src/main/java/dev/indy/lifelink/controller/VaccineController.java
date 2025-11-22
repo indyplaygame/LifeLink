@@ -35,7 +35,7 @@ public class VaccineController {
     @AuthRequired
     @PostMapping(value = "/add")
     public ResponseEntity<Vaccine> add(
-            @Validated(ValidationGroups.OnCreate.class) @RequestBody AddVaccineRequest body, HttpSession session
+        @Validated(ValidationGroups.OnCreate.class) @RequestBody AddVaccineRequest body, HttpSession session
     ) {
         Vaccine vaccine = this._vaccineService.addVaccine(session, body);
         return ResponseEntity.status(HttpStatus.CREATED).body(vaccine);
@@ -43,9 +43,9 @@ public class VaccineController {
 
     @AuthRequired
     @GetMapping("/{id}")
-    public ResponseEntity<Vaccine> get(@PathVariable Long id) {
+    public ResponseEntity<Vaccine> get(@PathVariable Long id, HttpSession session) {
         try {
-            Vaccine vaccine = this._vaccineService.getVaccine(id);
+            Vaccine vaccine = this._vaccineService.getVaccine(session, id);
             return ResponseEntity.ok(vaccine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -55,11 +55,12 @@ public class VaccineController {
     @AuthRequired
     @PutMapping("/{id}/update")
     public ResponseEntity<Vaccine> update(
-            @PathVariable Long id,
-            @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddVaccineRequest body
+        @PathVariable Long id,
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody AddVaccineRequest body,
+        HttpSession session
     ) {
         try {
-            Vaccine vaccine = this._vaccineService.updateVaccine(id, body);
+            Vaccine vaccine = this._vaccineService.updateVaccine(session, id, body);
             return ResponseEntity.ok(vaccine);
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
@@ -68,9 +69,9 @@ public class VaccineController {
 
     @AuthRequired
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(@PathVariable Long id, HttpSession session) {
         try {
-            this._vaccineService.deleteVaccine(id);
+            this._vaccineService.deleteVaccine(session, id);
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());

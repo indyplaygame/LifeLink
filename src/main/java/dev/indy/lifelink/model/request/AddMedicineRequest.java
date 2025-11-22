@@ -28,7 +28,6 @@ public record AddMedicineRequest(
         regexp = Util.GENERIC_NAME_REGEXP,
         message = "Dosage can only contain alphanumeric characters, apostrophes, commas, hyphens, and spaces"
     )
-
     String dosage,
 
     @NotBlank(groups = OnCreate.class, message = "Frequency cannot be empty")

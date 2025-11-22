@@ -1,6 +1,8 @@
 package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.exception.EntityNotFoundException;
+import dev.indy.lifelink.exception.NotOwnerOfEntityException;
+import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.ChronicDisease;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddChronicDiseaseRequest;
@@ -38,15 +40,19 @@ public class ChronicDiseaseService {
         return this._chronicDiseaseRepository.save(disease);
     }
 
-    public ChronicDisease getChronicDisease(long id) throws EntityNotFoundException {
+    public ChronicDisease getChronicDisease(HttpSession session, long id) throws EntityNotFoundException {
         ChronicDisease disease = this._chronicDiseaseRepository.findByDiseaseId(id);
         if(disease == null) throw new EntityNotFoundException(ChronicDisease.class, id);
+
+        Patient patient = this._authService.getActivePatient(session);
+        if(disease.getPatient().getPatientId() != patient.getPatientId())
+            throw new NotOwnerOfEntityException(ChronicDisease.class);
 
         return disease;
     }
 
-    public ChronicDisease updateChronicDisease(long id, AddChronicDiseaseRequest body) throws EntityNotFoundException {
-        ChronicDisease disease = this.getChronicDisease(id);
+    public ChronicDisease updateChronicDisease(HttpSession session, long id, AddChronicDiseaseRequest body) throws EntityNotFoundException {
+        ChronicDisease disease = this.getChronicDisease(session, id);
 
         if(body.name() != null) disease.setName(body.name());
         if(body.notes() != null) disease.setNotes(body.notes());
@@ -55,8 +61,8 @@ public class ChronicDiseaseService {
         return this._chronicDiseaseRepository.save(disease);
     }
 
-    public void deleteChronicDisease(long id) throws EntityNotFoundException {
-        ChronicDisease disease = this.getChronicDisease(id);
+    public void deleteChronicDisease(HttpSession session, long id) throws EntityNotFoundException {
+        ChronicDisease disease = this.getChronicDisease(session, id);
         this._chronicDiseaseRepository.delete(disease);
     }
 
