@@ -2,6 +2,7 @@ package dev.indy.lifelink.service;
 
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.response.PageResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,6 +42,16 @@ public class PatientService {
     public Map<String, ?> getPatientCard(String nfcUid) {
         Patient patient = this._authService.getPatientByNfcTag(nfcUid);
 
+        return this.getPatientCard(patient);
+    }
+
+    public Map<String, ?> getPatientCard(HttpSession session) {
+        Patient patient = this._authService.getActivePatient(session);
+
+        return this.getPatientCard(patient);
+    }
+
+    public Map<String, ?> getPatientCard(Patient patient) {
         return Map.of(
             "patient", patient,
             "card", Map.of(

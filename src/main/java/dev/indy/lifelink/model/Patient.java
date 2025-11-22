@@ -79,6 +79,7 @@ public class Patient {
     }
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "patientId", nullable = false, updatable = false)
     public UUID getPatientId() { return this._patientId; }

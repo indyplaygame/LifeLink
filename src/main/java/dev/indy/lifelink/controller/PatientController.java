@@ -4,6 +4,7 @@ import dev.indy.lifelink.auth.AuthMethod;
 import dev.indy.lifelink.auth.AuthRequired;
 import dev.indy.lifelink.service.PatientService;
 import dev.indy.lifelink.util.Util;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +35,13 @@ public class PatientController {
         String nfcUid
     ) {
         Map<String, ?> patientCard = this._patientService.getPatientCard(nfcUid);
+        return ResponseEntity.ok(patientCard);
+    }
+
+    @AuthRequired
+    @GetMapping("/details")
+    public ResponseEntity<Map<String, ?>> getPatientDetails(HttpSession session) {
+        Map<String, ?> patientCard = this._patientService.getPatientCard(session);
         return ResponseEntity.ok(patientCard);
     }
 }
