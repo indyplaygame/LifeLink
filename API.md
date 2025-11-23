@@ -218,7 +218,7 @@ Defines the structure of a vaccine object.
 ```json
 {
   "vaccineId": "Long",
-  "vaccineName": "String"
+  "name": "String"
 }
 ```
 

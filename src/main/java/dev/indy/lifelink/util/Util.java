@@ -10,7 +10,7 @@ public class Util {
 
     public static final String GENERIC_NAME_REGEXP = "(?i)^[a-z0-9 ',-]+$";
     public static final String ALPHABETIC_REGEXP = "(?i)^[A-Z]+$";
-    public static final String NFC_UID_REGEXP = "(?i)^(?:[a-f0-9]{2}[:-]?){4,6}[a-f0-9]{2}$";
+    public static final String NFC_UID_REGEXP = "(?i)^(?:[a-f0-9]{2}[:-]?){3,5}[a-f0-9]{2}$";
 
     public static LocalDate parseDate(String date) {
         try {

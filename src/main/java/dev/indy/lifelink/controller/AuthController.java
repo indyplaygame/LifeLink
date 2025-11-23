@@ -1,6 +1,5 @@
 package dev.indy.lifelink.controller;
 
-import dev.indy.lifelink.auth.AuthMethod;
 import dev.indy.lifelink.auth.AuthRequired;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.exception.InvalidAuthenticationCredentialsException;

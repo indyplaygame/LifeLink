@@ -23,7 +23,7 @@ public record CreatePatientRequest(
     String email,
 
     @NotBlank(groups = OnCreate.class, message = "PESEL cannot be empty")
-    @ValidPesel(groups = {OnCreate.class, OnUpdate.class})
+    @ValidPesel(groups = {OnCreate.class, OnUpdate.class}, message = "PESEL must be a valid 11-digit number conforming to the PESEL format.")
     String pesel,
 
     @NotBlank(groups = OnCreate.class, message = "Password cannot be empty")
