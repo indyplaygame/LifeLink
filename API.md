@@ -71,6 +71,8 @@
   - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-7)**
 - **[Patients](#patients)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Medical Card](#get-medical-card)**
+  - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Details](#get-details)**
+  - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)**
 - **[Other Endpoints](#other-endpoints)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)**
@@ -2513,11 +2515,11 @@ None
 Endpoints for managing patient profiles.
 
 ## Get Medical Card
-**URL:** `/patients/card/{nfcUid}`<br>
+**URL:** `/patients/card`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Required (JWT Token, see **[Generate Token](#generate-token)**)<br>
 **Content-Type:** `application/json`<br>
-**Description:** Retrieve a patient's medical card information using the NFC UID.<br>
+**Description:** Retrieve a medical card of currently authenticated patient.<br>
 
 ### **Request Body:**
 None
@@ -2542,13 +2544,41 @@ None
 ```
 <br>
 
-**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
-**Description**: Invalid or expired session.<br>
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or missing JWT token.<br>
 
 ```json
 {
-  "details": {
-    "nfcUid": "NFC tag UID must be a valid hexadecimal string (with optional colons or hyphens)."
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+## Get Details
+**URL:** `/patients/details`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required (Session)**)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Retrieve the authenticated patient's details.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Patient medical card retrieved successfully.<br>
+
+```json
+{
+  "patient": "Patient",
+  "card": {
+    "allergies": "List[Allergy]",
+    "chronicDiseases": "List[ChronicDisease]",
+    "medicalCheckups": "List[MedicalCheckup]",
+    "medicalDiagnoses": "List[MedicalDiagnosis]",
+    "medicalProcedures": "List[MedicalProcedure]",
+    "medicines": "List[Medicine]",
+    "vaccinations": "List[Vaccination]"
   }
 }
 ```
@@ -2564,6 +2594,100 @@ None
 ```
 <br>
 
+## Update
+**URL:** `/patients/update`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Update the authenticated patient's profile.<br>
+
+### **Request Body:**
+```json
+{
+  "dateOfBirth": "String (DD-MM-YYYY) (optional)",
+  "email": "String (optional)",
+  "pesel": "String (optional)",
+  "bloodType": "Enum (A+, A-, B+, B-, AB+, AB-, O+, O-) (optional)",
+  "person": {
+    "firstName": "String (optional)",
+    "middleName": "String (optional)",
+    "lastName": "String (optional)",
+    "phoneNumber": "String (optional)",
+    "gender": "Enum (MALE, FEMALE) (optional)",
+    "address": {
+      "country": "String (optional, default: POLAND)",
+      "postalCode": "String (optional)",
+      "city": "String (optional)",
+      "street": "String (optional)",
+      "buildingNumber": "String (optional)"
+    }
+  },
+  "emergencyContact": {
+    "firstName": "String (optional)",
+    "middleName": "String (optional)",
+    "lastName": "String (optional)",
+    "phoneNumber": "String (optional)",
+    "gender": "Enum (MALE, FEMALE) (optional)",
+    "address": {
+      "country": "String (optional, default: POLAND)",
+      "postalCode": "String (optional)",
+      "city": "String (optional)",
+      "street": "String (optional)",
+      "buildingNumber": "String (optional)"
+    }
+  }
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Patient profile updated successfully.<br>
+**Body**: `Patient`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "dateOfBirth": "String[]",
+    "email": "String[]",
+    "pesel": "String[]",
+    "bloodType": "String[]",
+    "person.firstName": "String[]",
+    "person.middleName": "String[]",
+    "person.lastName": "String[]",
+    "person.phoneNumber": "String[]",
+    "person.gender": "String[]",
+    "person.address.postalCode": "String[]",
+    "person.address.city": "String[]",
+    "person.address.street": "String[]",
+    "person.address.buildingNumber": "String[]",
+    "emergencyContact.firstName": "String[]",
+    "emergencyContact.middleName": "String[]",
+    "emergencyContact.lastName": "String[]",
+    "emergencyContact.phoneNumber": "String[]",
+    "emergencyContact.gender": "String[]",
+    "emergencyContact.address.postalCode": "String[]",
+    "emergencyContact.address.city": "String[]",
+    "emergencyContact.address.street": "String[]",
+    "emergencyContact.address.buildingNumber": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">409 Conflict</code><br>
+**Description**: Patient with the given PESEL already exists.<br>
+
+```json
+{
+  "details": "Patient with the given PESEL already exists."
+}
+```
+<br>
+
 
 # Other Endpoints
 Endpoints for miscellaneous operations.
@@ -2572,6 +2696,8 @@ Endpoints for miscellaneous operations.
 **URL:** `/ping`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** No<br>
+**Rate Limited:** Yes (20 requests/min)<br>
 **Content-Type:** None<br>
 **Description:** Simple ping endpoint to check if the API is reachable.<br>
 ### **Request Body:**
@@ -2589,6 +2715,8 @@ Pong!
 **URL:** `/health`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** No<br>
+**Rate Limited:** Yes (10 requests/min)<br>
 **Content-Type:** None<br>
 **Description:** Check the health status of the API.<br>
 

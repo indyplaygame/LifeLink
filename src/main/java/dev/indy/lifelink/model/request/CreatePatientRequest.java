@@ -14,16 +14,16 @@ import static dev.indy.lifelink.validation.ValidationGroups.*;
 
 public record CreatePatientRequest(
     @NotBlank(groups = OnCreate.class, message = "Date of birth cannot be empty")
-    @ValidDate(groups = OnCreate.class, message = "Date of birth must be in the format DD-MM-YYYY")
+    @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Date of birth must be in the format DD-MM-YYYY")
     String dateOfBirth,
 
     @NotBlank(groups = OnCreate.class, message = "Email cannot be empty")
-    @Email(groups = OnCreate.class, message = "Invalid email format")
-    @Length(groups = OnCreate.class, min = 5, max = 100, message = "Email must be between 5 and 100 characters")
+    @Email(groups = {OnCreate.class, OnUpdate.class}, message = "Invalid email format")
+    @Length(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 100, message = "Email must be between 5 and 100 characters")
     String email,
 
     @NotBlank(groups = OnCreate.class, message = "PESEL cannot be empty")
-    @ValidPesel(groups = OnCreate.class)
+    @ValidPesel(groups = {OnCreate.class, OnUpdate.class})
     String pesel,
 
     @NotBlank(groups = OnCreate.class, message = "Password cannot be empty")

@@ -1,5 +1,6 @@
 package dev.indy.lifelink.controller;
 
+import dev.indy.lifelink.decorators.rates.RateLimited;
 import dev.indy.lifelink.model.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +29,13 @@ public class HealthController {
         }
     }
 
+    @RateLimited(20)
     @GetMapping("/ping")
     public ResponseEntity<MessageResponse> ping() {
         return ResponseEntity.ok(new MessageResponse("Pong!"));
     }
 
+    @RateLimited
     @GetMapping("/health")
     public ResponseEntity<Map<String, ?>> health() {
         return ResponseEntity.ok(Map.of(

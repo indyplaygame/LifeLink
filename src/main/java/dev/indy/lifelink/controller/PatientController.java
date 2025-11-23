@@ -2,17 +2,18 @@ package dev.indy.lifelink.controller;
 
 import dev.indy.lifelink.auth.AuthMethod;
 import dev.indy.lifelink.auth.AuthRequired;
+import dev.indy.lifelink.exception.HttpException;
+import dev.indy.lifelink.exception.PatientExistsException;
+import dev.indy.lifelink.model.request.CreatePatientRequest;
 import dev.indy.lifelink.service.PatientService;
-import dev.indy.lifelink.util.Util;
+import dev.indy.lifelink.validation.ValidationGroups;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -26,22 +27,34 @@ public class PatientController {
         this._patientService = patientService;
     }
 
-    @Validated
     @AuthRequired(AuthMethod.TOKEN)
-    @GetMapping("/card/{nfcUid}")
+    @GetMapping("/card")
     public ResponseEntity<Map<String, ?>> getPatientCard(
-        @PathVariable
-        @Pattern(regexp = Util.NFC_UID_REGEXP, message = "NFC tag UID must be a valid hexadecimal string (with optional colons or hyphens).")
-        String nfcUid
+        @RequestHeader(HttpHeaders.AUTHORIZATION)
+        String authHeader
     ) {
-        Map<String, ?> patientCard = this._patientService.getPatientCard(nfcUid);
+        final Map<String, ?> patientCard = this._patientService.getPatientCard(authHeader);
         return ResponseEntity.ok(patientCard);
     }
 
     @AuthRequired
     @GetMapping("/details")
     public ResponseEntity<Map<String, ?>> getPatientDetails(HttpSession session) {
-        Map<String, ?> patientCard = this._patientService.getPatientCard(session);
+        final Map<String, ?> patientCard = this._patientService.getPatientCard(session);
         return ResponseEntity.ok(patientCard);
+    }
+
+    @AuthRequired
+    @PutMapping("/update")
+    public ResponseEntity<Map<String, ?>> updatePatientDetails(
+        @Validated(ValidationGroups.OnUpdate.class) @RequestBody CreatePatientRequest body,
+        HttpSession session
+    ) {
+        try {
+            final Map<String, ?> updatedPatient = this._patientService.updatePatientDetails(body, session);
+            return ResponseEntity.ok(updatedPatient);
+        } catch(PatientExistsException e) {
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
+        }
     }
 }

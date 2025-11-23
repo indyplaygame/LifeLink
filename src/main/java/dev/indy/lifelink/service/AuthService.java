@@ -62,10 +62,6 @@ public class AuthService {
     private boolean verifyPassword(String password, String hash) {
         return this._passwordEncoder.matches(password, hash);
     }
-    
-    private boolean userWithPeselExists(String pesel) {
-        return this._patientRepository.findByPesel(pesel) != null;
-    }
 
     private String generateJwtToken(String nfcTagId) {
         return Jwts.builder()
@@ -108,6 +104,10 @@ public class AuthService {
             personBody.gender(),
             address
         );
+    }
+
+    public boolean userWithPeselExists(String pesel) {
+        return this._patientRepository.findByPesel(pesel) != null;
     }
 
     public void createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
@@ -193,6 +193,17 @@ public class AuthService {
 
     public Patient getPatientByNfcTag(String nfcUid) {
         return this._patientRepository.findByNfcTagHash(this.hash(nfcUid));
+    }
+
+    public Patient getPatientByToken(String token) {
+        try {
+            final Claims claims = this.parseJwtToken(token);
+            final String nfcTag = claims.getSubject();
+
+            return this.getPatientByNfcTag(nfcTag);
+        } catch(Exception e) {
+            return null;
+        }
     }
 
     public Patient getActivePatient(HttpSession session) {
