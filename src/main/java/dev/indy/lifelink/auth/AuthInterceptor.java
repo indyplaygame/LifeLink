@@ -3,12 +3,12 @@ package dev.indy.lifelink.auth;
 import dev.indy.lifelink.exception.AuthorizationException;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.service.AuthService;
+import dev.indy.lifelink.util.Util;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -38,10 +38,10 @@ public class AuthInterceptor implements HandlerInterceptor {
                     break;
                 case TOKEN:
                     String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-                    if(authHeader == null || !authHeader.startsWith("Bearer "))
+                    if(authHeader == null || !authHeader.startsWith(Util.AUTH_HEADER_PREFIX))
                         throw new AuthorizationException();
 
-                    String token = authHeader.substring(7);
+                    String token = Util.retrieveToken(authHeader);
                     if(!this._authService.isTokenValid(token))
                         throw new AuthorizationException();
 

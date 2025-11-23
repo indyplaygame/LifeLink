@@ -195,6 +195,17 @@ public class AuthService {
         return this._patientRepository.findByNfcTagHash(this.hash(nfcUid));
     }
 
+    public Patient getPatientByToken(String token) {
+        try {
+            final Claims claims = this.parseJwtToken(token);
+            final String nfcTag = claims.getSubject();
+
+            return this.getPatientByNfcTag(nfcTag);
+        } catch(Exception e) {
+            return null;
+        }
+    }
+
     public Patient getActivePatient(HttpSession session) {
         if(session == null) return null;
 

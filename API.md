@@ -71,6 +71,7 @@
   - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-7)**
 - **[Patients](#patients)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Medical Card](#get-medical-card)**
+  - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Details](#get-details)**
 - **[Other Endpoints](#other-endpoints)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)**
@@ -2513,11 +2514,11 @@ None
 Endpoints for managing patient profiles.
 
 ## Get Medical Card
-**URL:** `/patients/card/{nfcUid}`<br>
+**URL:** `/patients/card`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Required (JWT Token, see **[Generate Token](#generate-token)**)<br>
 **Content-Type:** `application/json`<br>
-**Description:** Retrieve a patient's medical card information using the NFC UID.<br>
+**Description:** Retrieve a medical card of currently authenticated patient.<br>
 
 ### **Request Body:**
 None
@@ -2542,13 +2543,41 @@ None
 ```
 <br>
 
-**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
-**Description**: Invalid or expired session.<br>
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or missing JWT token.<br>
 
 ```json
 {
-  "details": {
-    "nfcUid": "NFC tag UID must be a valid hexadecimal string (with optional colons or hyphens)."
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+## Get Details
+**URL:** `/patients/details`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required (Session)**)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Retrieve the authenticated patient's details.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Patient medical card retrieved successfully.<br>
+
+```json
+{
+  "patient": "Patient",
+  "card": {
+    "allergies": "List[Allergy]",
+    "chronicDiseases": "List[ChronicDisease]",
+    "medicalCheckups": "List[MedicalCheckup]",
+    "medicalDiagnoses": "List[MedicalDiagnosis]",
+    "medicalProcedures": "List[MedicalProcedure]",
+    "medicines": "List[Medicine]",
+    "vaccinations": "List[Vaccination]"
   }
 }
 ```
