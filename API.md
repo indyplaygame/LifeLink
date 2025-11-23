@@ -72,6 +72,7 @@
 - **[Patients](#patients)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Medical Card](#get-medical-card)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Details](#get-details)**
+  - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)**
 - **[Other Endpoints](#other-endpoints)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)**
@@ -2589,6 +2590,100 @@ None
 ```json
 {
   "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+## Update
+**URL:** `/patients/update`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Update the authenticated patient's profile.<br>
+
+### **Request Body:**
+```json
+{
+  "dateOfBirth": "String (DD-MM-YYYY) (optional)",
+  "email": "String (optional)",
+  "pesel": "String (optional)",
+  "bloodType": "Enum (A+, A-, B+, B-, AB+, AB-, O+, O-) (optional)",
+  "person": {
+    "firstName": "String (optional)",
+    "middleName": "String (optional)",
+    "lastName": "String (optional)",
+    "phoneNumber": "String (optional)",
+    "gender": "Enum (MALE, FEMALE) (optional)",
+    "address": {
+      "country": "String (optional, default: POLAND)",
+      "postalCode": "String (optional)",
+      "city": "String (optional)",
+      "street": "String (optional)",
+      "buildingNumber": "String (optional)"
+    }
+  },
+  "emergencyContact": {
+    "firstName": "String (optional)",
+    "middleName": "String (optional)",
+    "lastName": "String (optional)",
+    "phoneNumber": "String (optional)",
+    "gender": "Enum (MALE, FEMALE) (optional)",
+    "address": {
+      "country": "String (optional, default: POLAND)",
+      "postalCode": "String (optional)",
+      "city": "String (optional)",
+      "street": "String (optional)",
+      "buildingNumber": "String (optional)"
+    }
+  }
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Patient profile updated successfully.<br>
+**Body**: `Patient`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "dateOfBirth": "String[]",
+    "email": "String[]",
+    "pesel": "String[]",
+    "bloodType": "String[]",
+    "person.firstName": "String[]",
+    "person.middleName": "String[]",
+    "person.lastName": "String[]",
+    "person.phoneNumber": "String[]",
+    "person.gender": "String[]",
+    "person.address.postalCode": "String[]",
+    "person.address.city": "String[]",
+    "person.address.street": "String[]",
+    "person.address.buildingNumber": "String[]",
+    "emergencyContact.firstName": "String[]",
+    "emergencyContact.middleName": "String[]",
+    "emergencyContact.lastName": "String[]",
+    "emergencyContact.phoneNumber": "String[]",
+    "emergencyContact.gender": "String[]",
+    "emergencyContact.address.postalCode": "String[]",
+    "emergencyContact.address.city": "String[]",
+    "emergencyContact.address.street": "String[]",
+    "emergencyContact.address.buildingNumber": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">409 Conflict</code><br>
+**Description**: Patient with the given PESEL already exists.<br>
+
+```json
+{
+  "details": "Patient with the given PESEL already exists."
 }
 ```
 <br>
