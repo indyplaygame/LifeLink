@@ -2696,6 +2696,8 @@ Endpoints for miscellaneous operations.
 **URL:** `/ping`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** No<br>
+**Rate Limited:** Yes (20 requests/min)<br>
 **Content-Type:** None<br>
 **Description:** Simple ping endpoint to check if the API is reachable.<br>
 ### **Request Body:**
@@ -2713,6 +2715,8 @@ Pong!
 **URL:** `/health`<br>
 **Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
 **Authentication:** Not Required<br>
+**Paginated:** No<br>
+**Rate Limited:** Yes (10 requests/min)<br>
 **Content-Type:** None<br>
 **Description:** Check the health status of the API.<br>
 
