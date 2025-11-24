@@ -50,19 +50,6 @@ public class AuthService {
         this._key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    private String hashPassword(String password) {
-        return password != null ? this._passwordEncoder.encode(password) : null;
-    }
-
-    private String hash(String str) {
-        byte[] encoded = this._digest.digest(str.getBytes(StandardCharsets.UTF_8));
-        return this._encoder.encodeToString(encoded);
-    }
-
-    private boolean verifyPassword(String password, String hash) {
-        return this._passwordEncoder.matches(password, hash);
-    }
-
     private String generateJwtToken(String nfcTagId) {
         return Jwts.builder()
             .setSubject(nfcTagId)
@@ -106,8 +93,25 @@ public class AuthService {
         );
     }
 
+    private String hashPassword(String password) {
+        return password != null ? this._passwordEncoder.encode(password) : null;
+    }
+
+    public String hash(String str) {
+        byte[] encoded = this._digest.digest(str.getBytes(StandardCharsets.UTF_8));
+        return this._encoder.encodeToString(encoded);
+    }
+
+    public boolean verifyPassword(String password, String hash) {
+        return this._passwordEncoder.matches(password, hash);
+    }
+
     public boolean userWithPeselExists(String pesel) {
         return this._patientRepository.findByPesel(pesel) != null;
+    }
+
+    public boolean userWithDispenserNfcTagExists(String nfcTagUid) {
+        return this._patientRepository.findByDispenserNfcTagHash(this.hash(nfcTagUid)) != null;
     }
 
     public void createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
@@ -134,7 +138,7 @@ public class AuthService {
     public void authenticate(HttpSession session, LoginRequest body) throws InvalidAuthenticationCredentialsException, SessionActiveException {
         if(this.isAuthenticated(session)) throw new SessionActiveException();
 
-        final Patient patient = this._patientRepository.findByPesel(body.pesel());
+        final Patient patient = this.getPatientByPesel(body.pesel());
         if(patient == null || !this.verifyPassword(body.password(), patient.getPasswordHash()))
             throw new InvalidAuthenticationCredentialsException();
 
@@ -189,6 +193,10 @@ public class AuthService {
         patient.setNfcCodeHash(null);
 
         this._patientRepository.save(patient);
+    }
+
+    public Patient getPatientByPesel(String pesel) {
+        return this._patientRepository.findByPesel(pesel);
     }
 
     public Patient getPatientByNfcTag(String nfcUid) {

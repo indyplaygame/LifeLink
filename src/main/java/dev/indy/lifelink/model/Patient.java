@@ -19,6 +19,7 @@ public class Patient {
     private String _pesel;
     private String _nfcTagHash;
     private String _nfcCodeHash;
+    private String _dispenserNfcTagHash;
     private String _passwordHash;
     private BloodType _bloodType;
     private Person _person;
@@ -106,6 +107,11 @@ public class Patient {
     @Column(name = "nfcCodeHash", nullable = true, length = 255, unique = true)
     public String getNfcCodeHash() { return this._nfcCodeHash; }
     public void setNfcCodeHash(String medicalInfoCode) { this._nfcCodeHash = medicalInfoCode; }
+
+    @JsonIgnore
+    @Column(name = "dispenserNfcTagHash", nullable = true, length = 255, unique = true)
+    public String getDispenserNfcTagHash() { return this._dispenserNfcTagHash; }
+    public void setDispenserNfcTagHash(String dispenserNfcTagHash) { this._dispenserNfcTagHash = dispenserNfcTagHash; }
 
     @JsonIgnore
     @Column(name = "passwordHash", nullable = false, length = 255)
