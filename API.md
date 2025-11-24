@@ -73,6 +73,9 @@
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Medical Card](#get-medical-card)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Details](#get-details)**
   - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)**
+- **[Medicines Dispenser NFC](#medicines-dispenser-nfc)**
+  - **[<code style="color: rgb(250, 224, 124)">POST</code> Register NFC Tag](#register-nfc-tag-1)** 
+  - **[<code style="color: rgb(182, 168, 225)">PATCH</code> Verify NFC Tag](#verify-nfc-tag)**
 - **[Other Endpoints](#other-endpoints)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)**
@@ -2684,6 +2687,116 @@ None
 ```json
 {
   "details": "Patient with the given PESEL already exists."
+}
+```
+<br>
+
+
+# Medicines Dispenser NFC
+Endpoints for managing medicines dispenser NFC tags.
+
+## Register NFC Tag
+**URL:** `/nfc/register`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Not required<br>
+**Content-Type:** `application/json`<br>
+**Description:** Register a new NFC tag for medicine dispenser.<br>
+
+### **Request Body:**
+```json
+{
+  "pesel": "String",
+  "password": "String",
+  "nfcTagUid": "String"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Successful authentication.<br>
+```json
+{
+  "message": "NFC tag registered successfully."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "pesel": "String[]",
+    "password": "String[]",
+    "nfcTagUid": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid PESEL or password provided.<br>
+
+```json
+{
+  "details": "Invalid authentication credentials provided."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">409 Conflict</code><br>
+**Description**: The NFC tag is already registered to another patient.<br>
+
+```json
+{
+  "details": "NFC tag is already registered to another patient."
+}
+```
+<br>
+
+## Verify NFC Tag
+**URL:** `/nfc/verify`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Not required<br>
+**Content-Type:** `application/json`<br>
+**Description:** Verify whether a patient with given NFC tag is eligible to receive medicines.<br>
+
+### **Request Body:**
+```json
+{
+  "uid": "String"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Patient with given NFC tag is eligible to receive medicines.<br>
+```json
+{
+  "message": "NFC tag verified successfully."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "uid": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: Patient with given NFC tag is not eligible to receive medicines.<br>
+
+```json
+{
+  "details": "NFC tag verification failed."
 }
 ```
 <br>
