@@ -16,7 +16,7 @@ public record CreatePersonRequest(
     @Length(groups = {OnCreate.class, OnUpdate.class}, min = 1, max = 50, message = "First name must be up to 50 characters")
     String firstName,
 
-    @Pattern(groups = OnCreate.class, regexp = Util.ALPHABETIC_REGEXP, message = "Middle name can only contain alphabetic characters")
+    @Pattern(groups = {OnCreate.class, OnUpdate.class}, regexp = Util.ALPHABETIC_REGEXP, message = "Middle name can only contain alphabetic characters")
     @Length(groups = {OnCreate.class, OnUpdate.class}, max = 50, message = "Middle name must be up to 50 characters")
     String middleName,
 
