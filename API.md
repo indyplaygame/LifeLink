@@ -75,7 +75,7 @@
   - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)**
 - **[Medicines Dispenser NFC](#medicines-dispenser-nfc)**
   - **[<code style="color: rgb(250, 224, 124)">POST</code> Register NFC Tag](#register-nfc-tag-1)** 
-  - **[<code style="color: rgb(182, 168, 225)">PATCH</code> Verify NFC Tag](#verify-nfc-tag)**
+  - **[<code style="color: rgb(250, 224, 124)">POST</code> Verify NFC Tag](#verify-nfc-tag)**
 - **[Other Endpoints](#other-endpoints)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Ping](#ping)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Health Check](#health-check)**
