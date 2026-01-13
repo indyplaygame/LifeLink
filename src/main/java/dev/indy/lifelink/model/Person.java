@@ -14,6 +14,7 @@ public class Person {
     private String _firstName;
     private String _middleName;
     private String _lastName;
+    private String _email;
     private String _phoneNumber;
     private Gender _gender;
     private Address _address;
@@ -25,10 +26,11 @@ public class Person {
 
     protected Person() {}
 
-    public Person(String firstName, String middleName, String lastName, String phoneNumber, Gender gender, Address address) {
+    public Person(String firstName, String middleName, String lastName, String email, String phoneNumber, Gender gender, Address address) {
         this._firstName = Util.capitalize(firstName);
         this._middleName = Util.capitalize(middleName);
         this._lastName = Util.capitalize(lastName);
+        this._email = email.toLowerCase();
         this._phoneNumber = phoneNumber;
         this._gender = gender;
         this._address = address;
@@ -51,6 +53,10 @@ public class Person {
     @Column(name = "lastName", nullable = false, length = 50)
     public String getLastName() { return this._lastName; }
     public void setLastName(String lastName) { this._lastName = lastName; }
+
+    @Column(name = "email", nullable = false, length = 100, unique = true)
+    public String getEmail() { return this._email; }
+    public void setEmail(String email) { this._email = email; }
 
     @Column(name = "phoneNumber", nullable = false, length = 15)
     public String getPhoneNumber() { return this._phoneNumber; }

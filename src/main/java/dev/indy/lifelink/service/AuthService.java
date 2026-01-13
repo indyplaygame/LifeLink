@@ -87,6 +87,7 @@ public class AuthService {
             personBody.firstName(),
             personBody.middleName(),
             personBody.lastName(),
+            personBody.email(),
             personBody.phoneNumber(),
             personBody.gender(),
             address
@@ -123,7 +124,6 @@ public class AuthService {
 
         final Patient patient = new Patient(
             Util.parseDate(body.dateOfBirth()),
-            body.email(),
             body.pesel(),
             this.hashPassword(body.password()),
             body.bloodType(),

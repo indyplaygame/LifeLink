@@ -17,11 +17,6 @@ public record CreatePatientRequest(
     @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Date of birth must be in the format DD-MM-YYYY")
     String dateOfBirth,
 
-    @NotBlank(groups = OnCreate.class, message = "Email cannot be empty")
-    @Email(groups = {OnCreate.class, OnUpdate.class}, message = "Invalid email format")
-    @Length(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 100, message = "Email must be between 5 and 100 characters")
-    String email,
-
     @NotBlank(groups = OnCreate.class, message = "PESEL cannot be empty")
     @ValidPesel(groups = {OnCreate.class, OnUpdate.class}, message = "PESEL must be a valid 11-digit number conforming to the PESEL format.")
     String pesel,
