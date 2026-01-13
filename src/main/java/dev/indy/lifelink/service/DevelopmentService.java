@@ -1,13 +1,18 @@
 package dev.indy.lifelink.service;
 
+import dev.indy.lifelink.model.MedicineScheduleLog;
+import dev.indy.lifelink.model.response.ScheduledTaskResponse;
 import dev.indy.lifelink.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Profile({"dev", "stage"})
 @Service
 public class DevelopmentService {
+    private final SchedulerService _schedulerService;
     private final AllergyRepository _allergyRepository;
     private final ChronicDiseaseRepository _chronicDiseaseRepository;
     private final MedicalCheckupRepository _medicalCheckupRepository;
@@ -21,6 +26,7 @@ public class DevelopmentService {
 
     @Autowired
     public DevelopmentService(
+        SchedulerService schedulerService,
         AllergyRepository allergyRepository,
         ChronicDiseaseRepository chronicDiseaseRepository,
         MedicalCheckupRepository medicalCheckupRepository,
@@ -32,6 +38,7 @@ public class DevelopmentService {
         VaccinationRepository vaccinationRepository,
         VaccineRepository vaccineRepository
     ) {
+        this._schedulerService = schedulerService;
         this._allergyRepository = allergyRepository;
         this._chronicDiseaseRepository = chronicDiseaseRepository;
         this._medicalCheckupRepository = medicalCheckupRepository;
@@ -42,6 +49,10 @@ public class DevelopmentService {
         this._personRepository = personRepository;
         this._vaccinationRepository = vaccinationRepository;
         this._vaccineRepository = vaccineRepository;
+    }
+
+    public List<ScheduledTaskResponse> listScheduledTasks() {
+        return this._schedulerService.getScheduledTasks();
     }
 
     public void clearDatabase() {

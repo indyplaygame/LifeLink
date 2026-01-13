@@ -1,12 +1,15 @@
 package dev.indy.lifelink.service;
 
+import dev.indy.lifelink.exception.EntityHasRelatedDataException;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.NotOwnerOfEntityException;
 import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Medicine;
+import dev.indy.lifelink.model.MedicineSchedule;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddMedicineRequest;
 import dev.indy.lifelink.repository.MedicineRepository;
+import dev.indy.lifelink.repository.MedicineScheduleRepository;
 import dev.indy.lifelink.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,13 @@ import java.util.List;
 @Service
 public class MedicineService {
     private final MedicineRepository _medicineRepository;
+    private final MedicineScheduleRepository _scheduleRepository;
     private final AuthService _authService;
 
     @Autowired
-    public MedicineService(MedicineRepository medicineRepository, AuthService authService) {
+    public MedicineService(MedicineRepository medicineRepository, MedicineScheduleRepository scheduleRepository, AuthService authService) {
         this._medicineRepository = medicineRepository;
+        this._scheduleRepository = scheduleRepository;
         this._authService = authService;
     }
 
@@ -59,8 +64,11 @@ public class MedicineService {
         return this._medicineRepository.save(medicine);
     }
 
-    public void deleteMedicine(HttpSession session, long id) throws EntityNotFoundException {
+    public void deleteMedicine(HttpSession session, long id) throws EntityNotFoundException, EntityHasRelatedDataException {
         Medicine medicine = this.getMedicine(session, id);
+        if(this._scheduleRepository.existsByMedicine(medicine))
+            throw new EntityHasRelatedDataException(Medicine.class, MedicineSchedule.class);
+
         this._medicineRepository.delete(medicine);
     }
 

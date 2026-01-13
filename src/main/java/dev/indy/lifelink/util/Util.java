@@ -1,7 +1,12 @@
 package dev.indy.lifelink.util;
 
+import java.time.DayOfWeek;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Util {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -27,5 +32,13 @@ public class Util {
 
     public static String retrieveToken(String authHeader) {
         return authHeader.substring(AUTH_HEADER_PREFIX.length()).trim();
+    }
+
+    public static String timeToCron(LocalTime time, Set<DayOfWeek> weekDays) {
+        return String.format("0 %d %d * * %s", time.getMinute(), time.getHour(), Util.weekDaysToCron(weekDays));
+    }
+
+    public static String weekDaysToCron(Set<DayOfWeek> days) {
+        return days.stream().map(d -> d.name().substring(0, 3)).collect(Collectors.joining(","));
     }
 }

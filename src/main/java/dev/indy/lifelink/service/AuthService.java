@@ -111,7 +111,7 @@ public class AuthService {
     }
 
     public boolean userWithDispenserNfcTagExists(String nfcTagUid) {
-        return this._patientRepository.findByDispenserNfcTagHash(this.hash(nfcTagUid)) != null;
+        return this.getPatientByDispenserNfcTag(nfcTagUid) != null;
     }
 
     public void createPatient(HttpSession session, CreatePatientRequest body) throws PatientExistsException, SessionActiveException {
@@ -201,6 +201,10 @@ public class AuthService {
 
     public Patient getPatientByNfcTag(String nfcUid) {
         return this._patientRepository.findByNfcTagHash(this.hash(nfcUid));
+    }
+
+    public Patient getPatientByDispenserNfcTag(String nfcTagUid) {
+        return this._patientRepository.findByDispenserNfcTagHash(this.hash(nfcTagUid));
     }
 
     public Patient getPatientByToken(String token) {
