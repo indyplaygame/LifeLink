@@ -6,10 +6,7 @@ import dev.indy.lifelink.service.DevelopmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,6 +25,12 @@ public class DevelopmentController {
     public ResponseEntity<List<ScheduledTaskResponse>> listScheduledTasks() {
         List<ScheduledTaskResponse> scheduledTasks = this._developmentService.listScheduledTasks();
         return ResponseEntity.ok(scheduledTasks);
+    }
+
+    @PostMapping("/email/test")
+    public ResponseEntity<Void> sendTestEmail(@RequestBody String target) {
+        this._developmentService.sendTestEmail(target);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/db/clear")

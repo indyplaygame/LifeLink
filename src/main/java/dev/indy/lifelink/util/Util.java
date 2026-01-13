@@ -1,5 +1,7 @@
 package dev.indy.lifelink.util;
 
+import dev.indy.lifelink.model.Person;
+
 import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -40,5 +42,13 @@ public class Util {
 
     public static String weekDaysToCron(Set<DayOfWeek> days) {
         return days.stream().map(d -> d.name().substring(0, 3)).collect(Collectors.joining(","));
+    }
+
+    public static String getFullName(Person person) {
+        return "%s%s %s".formatted(
+            person.getFirstName(),
+            person.getMiddleName() != null ? " %s".formatted(person.getMiddleName()) : "",
+            person.getLastName()
+        );
     }
 }

@@ -5,6 +5,7 @@ import dev.indy.lifelink.exception.NotOwnerOfEntityException;
 import dev.indy.lifelink.model.Medicine;
 import dev.indy.lifelink.model.MedicineSchedule;
 import dev.indy.lifelink.model.Patient;
+import dev.indy.lifelink.model.Person;
 import dev.indy.lifelink.model.request.AddMedicineScheduleRequest;
 import dev.indy.lifelink.model.response.ScheduledTaskResponse;
 import dev.indy.lifelink.repository.MedicineScheduleLogRepository;
@@ -38,6 +39,7 @@ public class SchedulerService {
     private final Map<Long, ScheduledFuture<?>> _userTasks;
     private final AuthService _authService;
     private final MedicineService _medicineService;
+    private final EmailService _emailService;
     private final MedicineScheduleRepository _scheduleRepository;
     private final MedicineScheduleLogRepository _scheduleLogRepository;
 
@@ -46,12 +48,14 @@ public class SchedulerService {
         @Qualifier("taskScheduler") TaskScheduler taskScheduler,
         AuthService authService,
         MedicineService medicineService,
+        EmailService emailService,
         MedicineScheduleRepository scheduleRepository,
         MedicineScheduleLogRepository scheduleLogRepository
     ) {
         this._taskScheduler = taskScheduler;
         this._authService = authService;
         this._medicineService = medicineService;
+        this._emailService = emailService;
         this._scheduleRepository = scheduleRepository;
         this._scheduleLogRepository = scheduleLogRepository;
         this._userTasks = new ConcurrentHashMap<>();
@@ -70,9 +74,10 @@ public class SchedulerService {
             body.dosage()
         );
 
+        this._scheduleRepository.save(schedule);
         this.scheduleMedicineReminder(schedule);
 
-        return this._scheduleRepository.save(schedule);
+        return schedule;
     }
 
     public MedicineSchedule getSchedule(HttpSession session, long id) throws EntityNotFoundException {
@@ -139,8 +144,12 @@ public class SchedulerService {
             LocalDate today = LocalDate.now();
             if(this._scheduleLogRepository.existsMedicineScheduleLogByDate(schedule, today)) return;
 
-            // Mail notification
-            System.out.println("Didnt take meds");
+            Patient patient = schedule.getPatient();
+            Person peron = patient.getPerson();
+            Person contactPerson = patient.getContactPerson();
+
+            this._emailService.sendMedicineReminder(peron.getEmail(), schedule);
+            this._emailService.notifyAboutMedicineNotTaken(contactPerson.getEmail(), schedule);
         };
 
         this.scheduleTask(schedule, task);

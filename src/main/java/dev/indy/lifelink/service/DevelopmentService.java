@@ -13,6 +13,7 @@ import java.util.List;
 @Service
 public class DevelopmentService {
     private final SchedulerService _schedulerService;
+    private final EmailService _emailService;
     private final AllergyRepository _allergyRepository;
     private final ChronicDiseaseRepository _chronicDiseaseRepository;
     private final MedicalCheckupRepository _medicalCheckupRepository;
@@ -27,6 +28,7 @@ public class DevelopmentService {
     @Autowired
     public DevelopmentService(
         SchedulerService schedulerService,
+        EmailService emailService,
         AllergyRepository allergyRepository,
         ChronicDiseaseRepository chronicDiseaseRepository,
         MedicalCheckupRepository medicalCheckupRepository,
@@ -39,6 +41,7 @@ public class DevelopmentService {
         VaccineRepository vaccineRepository
     ) {
         this._schedulerService = schedulerService;
+        this._emailService = emailService;
         this._allergyRepository = allergyRepository;
         this._chronicDiseaseRepository = chronicDiseaseRepository;
         this._medicalCheckupRepository = medicalCheckupRepository;
@@ -53,6 +56,10 @@ public class DevelopmentService {
 
     public List<ScheduledTaskResponse> listScheduledTasks() {
         return this._schedulerService.getScheduledTasks();
+    }
+
+    public void sendTestEmail(String target) {
+        this._emailService.sendTestEmail(target);
     }
 
     public void clearDatabase() {

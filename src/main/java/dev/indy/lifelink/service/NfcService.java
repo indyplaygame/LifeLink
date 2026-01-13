@@ -23,16 +23,18 @@ public class NfcService {
 
     private final AuthService _authService;
     private final SchedulerService _schedulerService;
+    private final EmailService _emailService;
     private final PatientRepository _patientRepository;
     private final MedicineScheduleLogRepository _scheduleLogRepository;
 
     @Autowired
     public NfcService(
-        AuthService authService, SchedulerService schedulerService,
+        AuthService authService, SchedulerService schedulerService, EmailService emailService,
         PatientRepository patientRepository, MedicineScheduleLogRepository scheduleLogRepository
     ) {
         this._authService = authService;
         this._schedulerService = schedulerService;
+        this._emailService = emailService;
         this._patientRepository = patientRepository;
         this._scheduleLogRepository = scheduleLogRepository;
     }
@@ -68,6 +70,7 @@ public class NfcService {
 
             MedicineScheduleLog log = new MedicineScheduleLog(schedule);
             this._scheduleLogRepository.save(log);
+            this._emailService.notifyAboutMedicineTaken(schedule);
 
             valid = true;
         }
