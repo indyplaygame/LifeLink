@@ -19,30 +19,5 @@ public record AddMedicineRequest(
     String name,
 
     @Length(groups = {OnCreate.class, OnUpdate.class}, max = 1000, message = "Medicine notes cannot exceed 1000 characters")
-    String notes,
-
-    @NotBlank(groups = OnCreate.class, message = "Dosage cannot be empty")
-    @Length(groups = {OnCreate.class, OnUpdate.class}, max = 50, message = "Dosage cannot exceed 50 characters")
-    @Pattern(
-        groups = {OnCreate.class, OnUpdate.class},
-        regexp = Util.GENERIC_NAME_REGEXP,
-        message = "Dosage can only contain alphanumeric characters, apostrophes, commas, hyphens, and spaces"
-    )
-    String dosage,
-
-    @NotBlank(groups = OnCreate.class, message = "Frequency cannot be empty")
-    @Length(groups = {OnCreate.class, OnUpdate.class}, max = 50, message = "Frequency cannot exceed 50 characters")
-    @Pattern(
-        groups = {OnCreate.class, OnUpdate.class},
-        regexp = "(?i)^[a-z0-9 ',/-]+$",
-        message = "Frequency can only contain alphanumeric characters, apostrophes, commas, hyphens, slashes, and spaces"
-    )
-    String frequency,
-
-    @NotBlank(groups = OnCreate.class, message = "Start date cannot be empty")
-    @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Diagnosis date must be in the format DD-MM-YYYY")
-    String startDate,
-
-    @ValidDate(groups = {OnCreate.class, OnUpdate.class}, message = "Diagnosis date must be in the format DD-MM-YYYY")
-    String endDate
+    String notes
 ) {}

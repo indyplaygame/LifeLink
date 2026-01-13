@@ -33,10 +33,6 @@ public class MedicineService {
         Medicine medicine = new Medicine(
             body.name(),
             body.notes(),
-            body.dosage(),
-            body.frequency(),
-            Util.parseDate(body.startDate()),
-            Util.parseDate(body.endDate()),
             patient
         );
 
@@ -59,10 +55,6 @@ public class MedicineService {
 
         if(body.name() != null) medicine.setMedicineName(body.name());
         if(body.notes() != null) medicine.setNotes(body.notes());
-        if(body.dosage() != null) medicine.setDosage(body.dosage());
-        if(body.frequency() != null) medicine.setFrequency(body.frequency());
-        if(body.startDate() != null) medicine.setStartDate(Util.parseDate(body.startDate()));
-        if(body.endDate() != null) medicine.setEndDate(Util.parseDate(body.endDate()));
 
         return this._medicineRepository.save(medicine);
     }
