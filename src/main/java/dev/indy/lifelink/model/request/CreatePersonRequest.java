@@ -2,6 +2,7 @@ package dev.indy.lifelink.model.request;
 
 import dev.indy.lifelink.model.Person;
 import dev.indy.lifelink.util.Util;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -24,6 +25,11 @@ public record CreatePersonRequest(
     @Pattern(groups = {OnCreate.class, OnUpdate.class}, regexp = Util.ALPHABETIC_REGEXP, message = "Last name can only contain alphabetic characters")
     @Length(groups = {OnCreate.class, OnUpdate.class}, min = 1, max = 50, message = "Last name must be up to 50 characters")
     String lastName,
+
+    @NotBlank(groups = OnCreate.class, message = "Email cannot be empty")
+    @Email(groups = {OnCreate.class, OnUpdate.class}, message = "Invalid email format")
+    @Length(groups = {OnCreate.class, OnUpdate.class}, min = 5, max = 100, message = "Email must be between 5 and 100 characters")
+    String email,
 
     @NotBlank(groups = OnCreate.class, message = "Phone number cannot be empty")
     @Pattern(groups = {OnCreate.class, OnUpdate.class}, regexp = "^\\+?[1-9](?:[ -]?\\(?\\d\\)?){6,14}$", message = "Phone number format is invalid")

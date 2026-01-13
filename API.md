@@ -57,22 +57,28 @@
   - **[<code style="color: rgb(95, 221, 154)">GET</code> List](#list-5)**
   - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-5)**
   - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-5)**
-- **[Vaccinations](#vaccinations)**
+- **[Schedules](#schedules)**
   - **[<code style="color: rgb(250, 224, 124)">POST</code> Add](#add-6)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-6)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> List](#list-6)**
   - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-6)**
   - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-6)**
-- **[Vaccines](#vaccines)**
+- **[Vaccinations](#vaccinations)**
   - **[<code style="color: rgb(250, 224, 124)">POST</code> Add](#add-7)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-7)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> List](#list-7)**
   - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-7)**
   - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-7)**
+- **[Vaccines](#vaccines)**
+  - **[<code style="color: rgb(250, 224, 124)">POST</code> Add](#add-8)**
+  - **[<code style="color: rgb(95, 221, 154)">GET</code> Get](#get-8)**
+  - **[<code style="color: rgb(95, 221, 154)">GET</code> List](#list-8)**
+  - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-8)**
+  - **[<code style="color: rgb(234, 154, 142)">DELETE</code> Delete](#delete-8)**
 - **[Patients](#patients)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Medical Card](#get-medical-card)**
   - **[<code style="color: rgb(95, 221, 154)">GET</code> Get Details](#get-details)**
-  - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update)**
+  - **[<code style="color: rgb(103, 174, 246)">PUT</code> Update](#update-9)**
 - **[Medicines Dispenser NFC](#medicines-dispenser-nfc)**
   - **[<code style="color: rgb(250, 224, 124)">POST</code> Register NFC Tag](#register-nfc-tag-1)** 
   - **[<code style="color: rgb(250, 224, 124)">POST</code> Verify NFC Tag](#verify-nfc-tag)**
@@ -168,11 +174,20 @@ Defines the structure of a medicine object.
 {
   "medicineId": "Long",
   "medicineName": "String",
-  "notes": "String (optional)",
+  "notes": "String (optional)"
+}
+```
+
+## MedicineSchedule
+Defines the structure of a medicine schedule object.
+```json
+{
+  "scheduleId": "Long",
+  "medicine": "Medicine",
   "dosage": "String",
-  "frequency": "String",
-  "startDate": "String (DD-MM-YYYY)",
-  "endDate": "String (DD-MM-YYYY)"
+  "notes": "String",
+  "weekDays": "Set[Enum (MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)]",
+  "executionTime": "String (hh:mm)"
 }
 ```
 
@@ -182,7 +197,6 @@ Defines the structure of a patient object.
 {
   "patientId": "UUID (String)",
   "dateOfBirth": "String (DD-MM-YYYY)",
-  "email": "String",
   "pesel": "String",
   "bloodType": "Enum (A+, A-, B+, B-, AB+, AB-, O+, O-)",
   "person": "Person",
@@ -198,6 +212,7 @@ Defines the structure of a person object.
   "firstName": "String",
   "middleName": "String (optional)",
   "lastName": "String",
+  "email": "String",
   "phoneNumber": "String",
   "gender": "Enum (MALE, FEMALE)",
   "address": "Address"
@@ -247,7 +262,6 @@ Endpoints for user authentication and authorization.
 ```json
 {
   "dateOfBirth": "String (DD-MM-YYYY)",
-  "email": "String",
   "pesel": "String",
   "bloodType": "Enum (A+, A-, B+, B-, AB+, AB-, O+, O-)",
   "password": "String",
@@ -255,6 +269,7 @@ Endpoints for user authentication and authorization.
     "firstName": "String",
     "middleName": "String",
     "lastName": "String",
+    "email": "String",
     "phoneNumber": "String",
     "gender": "Enum (MALE, FEMALE)",
     "address": {
@@ -269,6 +284,7 @@ Endpoints for user authentication and authorization.
     "firstName": "String",
     "middleName": "String",
     "lastName": "String",
+    "email": "String",
     "phoneNumber": "String",
     "gender": "Enum (MALE, FEMALE)",
     "address": {
@@ -306,6 +322,7 @@ Endpoints for user authentication and authorization.
     "person.firstName": "String[]",
     "person.middleName": "String[]",
     "person.lastName": "String[]",
+    "person.email": "String[]",
     "person.phoneNumber": "String[]",
     "person.gender": "String[]",
     "person.address.postalCode": "String[]",
@@ -315,6 +332,7 @@ Endpoints for user authentication and authorization.
     "emergencyContact.firstName": "String[]",
     "emergencyContact.middleName": "String[]",
     "emergencyContact.lastName": "String[]",
+    "emergencyContact.email": "String[]",
     "emergencyContact.phoneNumber": "String[]",
     "emergencyContact.gender": "String[]",
     "emergencyContact.address.postalCode": "String[]",
@@ -1785,11 +1803,7 @@ Endpoints for managing patient medicines.
 ```json
 {
   "name": "String",
-  "notes": "String (optional)",
-  "dosage": "String",
-  "frequency": "String",
-  "startDate": "String (DD-MM-YYYY)",
-  "endDate": "String (DD-MM-YYYY) (optional)"
+  "notes": "String (optional)"
 }
 ```
 
@@ -1806,11 +1820,7 @@ Endpoints for managing patient medicines.
 {
   "details": {
     "name": "String[]",
-    "notes": "String[]",
-    "dosage": "String[]",
-    "frequency": "String[]",
-    "startDate": "String[]",
-    "endDate": "String[]"
+    "notes": "String[]"
   }
 }
 ```
@@ -1910,11 +1920,7 @@ None
 ```json
 {
   "name": "String (optional)",
-  "notes": "String (optional)",
-  "dosage": "String (optional)",
-  "frequency": "String (optional)",
-  "startDate": "String (DD-MM-YYYY) (optional)",
-  "endDate": "String (DD-MM-YYYY) (optional)"
+  "notes": "String (optional)"
 }
 ```
 
@@ -1931,11 +1937,7 @@ None
 {
   "details": {
     "name": "String[]",
-    "notes": "String[]",
-    "dosage": "String[]",
-    "frequency": "String[]",
-    "startDate": "String[]",
-    "endDate": "String[]"
+    "notes": "String[]"
   }
 }
 ```
@@ -2013,6 +2015,299 @@ None
 ```json
 {
   "details": "Could not find Medicine with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">409 Conflict</code><br>
+**Description**: The medicine cannot be deleted because it has related schedule records.<br>
+
+```json
+{
+  "details": "Entity of type Medicine has related data of type MedicineSchedule."
+}
+```
+<br>
+
+
+# Schedules
+Endpoints for managing patient medicine schedules.
+
+## Add
+**URL:** `/schedules/add`<br>
+**Method:** <code style="color: rgb(250, 224, 124)">POST</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Add a new medicine schedule to the patient's profile.<br>
+
+### **Request Body:**
+```json
+{
+  "weekDays": "List[Enum (MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)]",
+  "executionTime": "String (hh:mm)",
+  "notes": "String",
+  "dosage": "String",
+  "medicineId": "Long"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">201 Created</code><br>
+**Description**: Medicine added successfully.<br>
+**Body**: `MedicineSchedule`
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "weekDays": "String[]",
+    "executionTime": "String[]",
+    "notes": "String[]",
+    "dosage": "String[]",
+    "medicineId": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or expired session.<br>
+
+```json
+{
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: The authenticated user does not have permission to access medicine with provided `id`.<br>
+
+```json
+{
+  "details": "This Medicine does not belong to the authenticated patient."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Medicine with the specified `id` does not exist.<br>
+
+```json
+{
+  "details": "Could not find Medicine with ID {id}"
+}
+```
+<br>
+
+## Get
+**URL:** `/schedules/{id}`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Retrieve a schedule by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Medicine retrieved successfully.<br>
+**Body**: `MedicineSchedule`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or expired session.<br>
+
+```json
+{
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: The authenticated user does not have permission to access this schedule.<br>
+
+```json
+{
+  "details": "This MedicineSchedule does not belong to the authenticated patient."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Schedule with the specified `id` does not exist.<br>
+
+```json
+{
+  "details": "Could not find MedicineSchedule with ID {id}"
+}
+```
+<br>
+
+## List
+**URL:** `/schedules/list`<br>
+**Method:** <code style="color: rgb(95, 221, 154)">GET</code><br>
+**Authentication:** Required<br>
+**Paginated:** Yes (Default size: 20, Max size: 50)<br>
+**Content-Type:** None<br>
+**Description:** Retrieve a paginated list of schedules for the authenticated patient.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Schedules retrieved successfully.<br>
+**Body**: `Page[MedicineSchedule]`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or expired session.<br>
+
+```json
+{
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+## Update
+**URL:** `/schedules/{id}/update`<br>
+**Method:** <code style="color: rgb(103, 174, 246)">PUT</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Update an existing schedule by its `id`.<br>
+
+### **Request Body:**
+```json
+{
+  "weekDays": "List[Enum (MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY)] (optional)",
+  "executionTime": "String (hh:mm) (optional)",
+  "notes": "String (optional)",
+  "dosage": "String (optional)",
+  "medicineId": "Long (optional)"
+}
+```
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">200 OK</code><br>
+**Description**: Schedule updated successfully.<br>
+**Body**: `MedicineSchedule`<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">400 Bad Request</code><br>
+**Description**: Invalid request body format or missing required fields.<br>
+
+```json
+{
+  "details": {
+    "weekDays": "String[]",
+    "executionTime": "String[]",
+    "notes": "String[]",
+    "dosage": "String[]",
+    "medicineId": "String[]"
+  }
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or expired session.<br>
+
+```json
+{
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: The authenticated user does not have permission to access this schedule.<br>
+
+```json
+{
+  "details": "This MedicineSchedule does not belong to the authenticated patient."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: The authenticated user does not have permission to access this medicine.<br>
+
+```json
+{
+  "details": "This Medicine does not belong to the authenticated patient."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Schedule with the specified `id` does not exist.<br>
+
+```json
+{
+  "details": "Could not find MedicineSchedule with ID {id}"
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Medicine with the specified `id` does not exist.<br>
+
+```json
+{
+  "details": "Could not find Medicine with ID {id}"
+}
+```
+<br>
+
+## Delete
+**URL:** `/schedules/{id}/delete`<br>
+**Method:** <code style="color: rgb(234, 154, 142)">DELETE</code><br>
+**Authentication:** Required (Session)<br>
+**Content-Type:** `application/json`<br>
+**Description:** Delete an existing schedule by its `id`.<br>
+
+### **Request Body:**
+None
+
+### **Response:**<br>
+**Status**: <code style="color: rgb(107, 208, 98); background-color: rgb(1, 54, 20)">204 No Content</code><br>
+**Description**: Schedule deleted successfully.<br>
+**Body**: None<br>
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">401 Unauthorized</code><br>
+**Description**: Invalid or expired session.<br>
+
+```json
+{
+  "details": "This endpoint requires authentication."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">403 Forbidden</code><br>
+**Description**: The authenticated user does not have permission to access this schedule.<br>
+
+```json
+{
+  "details": "This MedicineSchedule does not belong to the authenticated patient."
+}
+```
+<br>
+
+**Status**: <code style="color: rgb(222, 154, 142); background-color: rgb(89, 27, 8)">404 Not Found</code><br>
+**Description**: Schedule with the specified `id` does not exist.<br>
+
+```json
+{
+  "details": "Could not find MedicineSchedule with ID {id}"
 }
 ```
 <br>
@@ -2608,13 +2903,13 @@ None
 ```json
 {
   "dateOfBirth": "String (DD-MM-YYYY) (optional)",
-  "email": "String (optional)",
   "pesel": "String (optional)",
   "bloodType": "Enum (A+, A-, B+, B-, AB+, AB-, O+, O-) (optional)",
   "person": {
     "firstName": "String (optional)",
     "middleName": "String (optional)",
     "lastName": "String (optional)",
+    "email": "String (optional)",
     "phoneNumber": "String (optional)",
     "gender": "Enum (MALE, FEMALE) (optional)",
     "address": {
@@ -2629,6 +2924,7 @@ None
     "firstName": "String (optional)",
     "middleName": "String (optional)",
     "lastName": "String (optional)",
+    "email": "String (optional)",
     "phoneNumber": "String (optional)",
     "gender": "Enum (MALE, FEMALE) (optional)",
     "address": {
@@ -2655,12 +2951,12 @@ None
 {
   "details": {
     "dateOfBirth": "String[]",
-    "email": "String[]",
     "pesel": "String[]",
     "bloodType": "String[]",
     "person.firstName": "String[]",
     "person.middleName": "String[]",
     "person.lastName": "String[]",
+    "person.email": "String[]",
     "person.phoneNumber": "String[]",
     "person.gender": "String[]",
     "person.address.postalCode": "String[]",
@@ -2670,6 +2966,7 @@ None
     "emergencyContact.firstName": "String[]",
     "emergencyContact.middleName": "String[]",
     "emergencyContact.lastName": "String[]",
+    "emergencyContact.email": "String[]",
     "emergencyContact.phoneNumber": "String[]",
     "emergencyContact.gender": "String[]",
     "emergencyContact.address.postalCode": "String[]",

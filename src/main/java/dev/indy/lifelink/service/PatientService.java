@@ -54,6 +54,7 @@ public class PatientService {
         if(body.firstName() != null) person.setFirstName(body.firstName());
         if(body.middleName() != null) person.setMiddleName(body.middleName());
         if(body.lastName() != null) person.setLastName(body.lastName());
+        if(body.email() != null) person.setEmail(body.email());
         if(body.phoneNumber() != null) person.setPhoneNumber(body.phoneNumber());
         if(body.gender() != null) person.setGender(body.gender());
 
@@ -78,7 +79,6 @@ public class PatientService {
         final Person contactPerson = patient.getContactPerson();
 
         if(body.dateOfBirth() != null) patient.setDateOfBirth(Util.parseDate(body.dateOfBirth()));
-        if(body.email() != null) patient.setEmail(body.email());
         if(body.bloodType() != null) patient.setBloodType(body.bloodType());
         if(body.pesel() != null) {
             final String pesel = body.pesel();

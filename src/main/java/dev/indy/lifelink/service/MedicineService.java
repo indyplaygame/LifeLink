@@ -1,12 +1,15 @@
 package dev.indy.lifelink.service;
 
+import dev.indy.lifelink.exception.EntityHasRelatedDataException;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.NotOwnerOfEntityException;
 import dev.indy.lifelink.model.Allergy;
 import dev.indy.lifelink.model.Medicine;
+import dev.indy.lifelink.model.MedicineSchedule;
 import dev.indy.lifelink.model.Patient;
 import dev.indy.lifelink.model.request.AddMedicineRequest;
 import dev.indy.lifelink.repository.MedicineRepository;
+import dev.indy.lifelink.repository.MedicineScheduleRepository;
 import dev.indy.lifelink.util.Util;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +22,13 @@ import java.util.List;
 @Service
 public class MedicineService {
     private final MedicineRepository _medicineRepository;
+    private final MedicineScheduleRepository _scheduleRepository;
     private final AuthService _authService;
 
     @Autowired
-    public MedicineService(MedicineRepository medicineRepository, AuthService authService) {
+    public MedicineService(MedicineRepository medicineRepository, MedicineScheduleRepository scheduleRepository, AuthService authService) {
         this._medicineRepository = medicineRepository;
+        this._scheduleRepository = scheduleRepository;
         this._authService = authService;
     }
 
@@ -33,10 +38,6 @@ public class MedicineService {
         Medicine medicine = new Medicine(
             body.name(),
             body.notes(),
-            body.dosage(),
-            body.frequency(),
-            Util.parseDate(body.startDate()),
-            Util.parseDate(body.endDate()),
             patient
         );
 
@@ -59,16 +60,15 @@ public class MedicineService {
 
         if(body.name() != null) medicine.setMedicineName(body.name());
         if(body.notes() != null) medicine.setNotes(body.notes());
-        if(body.dosage() != null) medicine.setDosage(body.dosage());
-        if(body.frequency() != null) medicine.setFrequency(body.frequency());
-        if(body.startDate() != null) medicine.setStartDate(Util.parseDate(body.startDate()));
-        if(body.endDate() != null) medicine.setEndDate(Util.parseDate(body.endDate()));
 
         return this._medicineRepository.save(medicine);
     }
 
-    public void deleteMedicine(HttpSession session, long id) throws EntityNotFoundException {
+    public void deleteMedicine(HttpSession session, long id) throws EntityNotFoundException, EntityHasRelatedDataException {
         Medicine medicine = this.getMedicine(session, id);
+        if(this._scheduleRepository.existsByMedicine(medicine))
+            throw new EntityHasRelatedDataException(Medicine.class, MedicineSchedule.class);
+
         this._medicineRepository.delete(medicine);
     }
 

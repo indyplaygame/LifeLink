@@ -2,6 +2,7 @@ package dev.indy.lifelink.controller;
 
 import dev.indy.lifelink.auth.AuthRequired;
 import dev.indy.lifelink.decorators.pagination.Paginated;
+import dev.indy.lifelink.exception.EntityHasRelatedDataException;
 import dev.indy.lifelink.exception.EntityNotFoundException;
 import dev.indy.lifelink.exception.HttpException;
 import dev.indy.lifelink.model.ChronicDisease;
@@ -72,6 +73,8 @@ public class MedicineController {
             return ResponseEntity.noContent().build();
         } catch(EntityNotFoundException e) {
             throw new HttpException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch(EntityHasRelatedDataException e) {
+            throw new HttpException(HttpStatus.CONFLICT, e.getMessage());
         }
     }
 

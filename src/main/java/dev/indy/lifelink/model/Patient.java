@@ -15,7 +15,6 @@ import java.util.UUID;
 public class Patient {
     private UUID _patientId;
     private LocalDate _dateOfBirth;
-    private String _email;
     private String _pesel;
     private String _nfcTagHash;
     private String _nfcCodeHash;
@@ -68,10 +67,9 @@ public class Patient {
     protected Patient() {}
 
     public Patient(
-        LocalDate dateOfBirth, String email, String pesel, String passwordHash, BloodType bloodType, Person person, Person contactPerson
+        LocalDate dateOfBirth, String pesel, String passwordHash, BloodType bloodType, Person person, Person contactPerson
     ) {
         this._dateOfBirth = dateOfBirth;
-        this._email = email.toLowerCase();
         this._pesel = pesel;
         this._passwordHash = passwordHash;
         this._bloodType = bloodType;
@@ -89,10 +87,6 @@ public class Patient {
     @Column(name = "dateOfBirth", nullable = false)
     public LocalDate getDateOfBirth() { return this._dateOfBirth; }
     public void setDateOfBirth(LocalDate dateOfBirth) { this._dateOfBirth = dateOfBirth; }
-
-    @Column(name = "email", nullable = false, length = 100, unique = true)
-    public String getEmail() { return this._email; }
-    public void setEmail(String email) { this._email = email; }
 
     @Column(name = "pesel", nullable = false, length = 11, unique = true)
     public String getPesel() { return this._pesel; }
