@@ -2,6 +2,7 @@ package dev.indy.lifelink.controller;
 
 import dev.indy.lifelink.decorators.rates.RateLimited;
 import dev.indy.lifelink.model.response.MessageResponse;
+import dev.indy.lifelink.service.HealthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,19 +15,11 @@ import java.util.Map;
 
 @RestController
 public class HealthController {
-    private final DataSource _dataSource;
+    private final HealthService _healthService;
 
     @Autowired
-    public HealthController(DataSource dataSource) {
-        this._dataSource = dataSource;
-    }
-
-    private boolean isDatabaseUp() {
-        try(Connection ignored = this._dataSource.getConnection()) {
-            return true;
-        } catch(Exception ex) {
-            return false;
-        }
+    public HealthController(HealthService healthService) {
+        this._healthService = healthService;
     }
 
     @RateLimited(20)
@@ -42,7 +35,8 @@ public class HealthController {
             "status", "OK",
             "timestamp", Instant.now().toString(),
             "services", Map.of(
-                "database", this.isDatabaseUp() ? "UP" : "DOWN"
+                "database", this._healthService.isDatabaseUp() ? "UP" : "DOWN",
+                "email", this._healthService.isEmailServiceUp() ? "UP" : "DOWN"
             )
         ));
     }
